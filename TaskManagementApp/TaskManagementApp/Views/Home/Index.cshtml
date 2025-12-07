@@ -1,8 +1,131 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "TaskFlow - Gestionează proiectele inteligent";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+
+<style>
+    .hero {
+        background: linear-gradient(135deg, #0d6efd, #6610f2);
+        color: white;
+        padding: 100px 0;
+        text-align: center;
+    }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+    .section-title {
+        font-weight: bold;
+        margin-top: 50px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .feature-card {
+        border: none;
+        transition: 0.3s;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
+        }
+
+</style>
+
+<div class="hero">
+    <h1>Organizează-ți proiectele într-un mod inteligent</h1>
+    <p>Platformă modernă de Task Management pentru echipe și proiecte colaborative.</p>
+
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <a href="/Identity/Account/Login" class="btn btn-light btn-lg mt-3 me-2">Autentificare</a>
+        <a href="/Identity/Account/Register" class="btn btn-outline-light btn-lg mt-3">Înregistrare</a>
+    }
+    else
+    {
+        <a href="/Dashboard" class="btn btn-light btn-lg mt-3 me-2">Dashboard</a>
+        <a href="/Projects" class="btn btn-outline-light btn-lg mt-3">Proiectele mele</a>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin" class="btn btn-warning btn-lg mt-3 ms-2">Admin Panel</a>
+        }
+    }
+</div>
+
+<!-- FEATURES -->
+<div class="container">
+    <h2 class="section-title">Funcționalități principale</h2>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card feature-card p-4">
+                <h4>✔ Gestionarea proiectelor</h4>
+                <p>Creezi proiecte, inviți membri și urmărești progresul fiecărei echipe.</p>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card feature-card p-4">
+                <h4>📌 Task-uri inteligente</h4>
+                <p>Adaugă task-uri, asignază membri și setează statusuri pentru progres.</p>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card feature-card p-4">
+                <h4>💬 Sistem de comentarii</h4>
+                <p>Colaborează direct în task-uri prin comentarii actualizate în timp real.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="container mt-5">
+    <h2 class="section-title">Ce spun utilizatorii</h2>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card p-4">
+                <p>„O platformă intuitivă care m-a ajutat să-mi coordonez echipa mult mai eficient!”</p>
+                <strong>— Andrei, Project Manager</strong>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-4">
+                <p>„Îmi place dashboard-ul personalizat, văd totul foarte clar.”</p>
+                <strong>— Ioana, Developer</strong>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-4">
+                <p>„Feature-ul cu AI este genial! Rezumatele rapide mă ajută zilnic.”</p>
+                <strong>— Mihai, Team Lead</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA -->
+<div class="text-center my-5">
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <a href="/Identity/Account/Register" class="btn btn-primary btn-lg px-5">Începe acum</a>
+    }
+    else
+    {
+        <a href="/Dashboard" class="btn btn-success btn-lg px-5">Mergi la Dashboard</a>
+    }
 </div>
