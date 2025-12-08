@@ -10,18 +10,6 @@ namespace TaskManagementApp.Models
         public int Id { get; set; }
 
         public int TaskId { get; set; }
-<<<<<<< HEAD
-
-        public int UserId { get; set; }
-
-        public string Content { get; set; }
-
-        public DateTime Date { get; set; }
-
-        public virtual Task Task { get; set; }
-
-        public virtual User User { get; set; }
-=======
         public virtual Task Task { get; set; }
 
         //cheie straina catre userul care a postat comentariul
@@ -32,7 +20,6 @@ namespace TaskManagementApp.Models
         public string Content { get; set; }
 
         public DateTime Date { get; set; }
-        
->>>>>>> 7b94f914442b998218c85c5a8eb48d8790678d15
+
     }
 }
