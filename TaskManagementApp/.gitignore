@@ -1,0 +1,46 @@
+# Visual Studio / .NET
+.vs/
+.vscode/
+.idea/
+
+# Build artifacts
+bin/
+obj/
+artifacts/
+[Bb]in/
+[Oo]bj/
+
+# Rider
+.idea/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+.packages/
+.nuget/
+
+# Publish output
+publish/
+
+# Logs
+*.log
+
+# Databases
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# ASP.NET Core / Secrets
+appsettings.*.Local.json
+secrets.json
+.vsconfig
+
+# Rider / ReSharper
+_ReSharper*/
+*.ReSharper	
