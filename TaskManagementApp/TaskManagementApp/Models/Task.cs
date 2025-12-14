@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaskManagementApp.Models
@@ -23,7 +23,7 @@ namespace TaskManagementApp.Models
         //continutul este optional
         public string? Content { get; set; }
         public string Status { get; set; }
-
+      
         //cheie straina catre userul aignat
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
