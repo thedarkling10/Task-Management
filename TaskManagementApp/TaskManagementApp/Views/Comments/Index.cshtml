@@ -1,5 +1,42 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<TaskManagementApp.Models.Comment>
 @{
+    ViewBag.Title = "Comentarii";
+    var task = ViewBag.Task;
+}
+
+<h2>Comentarii pentru task-ul: @task.Title</h2>
+
+<a class="btn btn-primary mb-3" href="/Comments/New?taskId=@task.Id">Adaugă comentariu</a>
+
+@if (Model.Count == 0)
+{
+    <p>Nu există comentarii.</p>
+}
+else
+{
+    foreach (var comment in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">
+                    @comment.User.UserName -
+                    @comment.Date.ToString("dd.MM.yyyy HH:mm")
+                </h6>
+
+                <p>@comment.Content</p>
+
+                @if (comment.UserId == User.FindFirst("sub")?.Value || User.IsInRole("Administrator"))
+                {
+                    <a href="/Comments/Edit/@comment.Id" class="btn btn-sm btn-warning">Editează</a>
+
+                    <form method="post" action="/Comments/Delete/@comment.Id"
+                          style="display:inline" onsubmit="return confirm('Sigur ștergeți?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Șterge</button>
+                    </form>
+                }
+
+                <a href="/Comments/Show/@comment.Id" class="btn btn-sm btn-info">Vezi</a>
+            </div>
+        </div>
+    }
 }

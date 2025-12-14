@@ -16,6 +16,6 @@ namespace TaskManagementApp.Models
 
         public DateTime Date { get; set; }
 
-       
+
     }
 }

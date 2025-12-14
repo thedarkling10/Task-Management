@@ -1,5 +1,23 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model TaskManagementApp.Models.Comment
 @{
+    ViewBag.Title = "Editează comentariu";
+    var task = ViewBag.Task;
 }
+
+<h2>Editează comentariu</h2>
+
+<p><strong>Task:</strong> @task.Title</p>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="TaskId" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Content"></label>
+        <textarea asp-for="Content" class="form-control"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Salvează</button>
+    <a class="btn btn-secondary" href="/Comments?taskId=@task.Id">Renunță</a>
+</form>
