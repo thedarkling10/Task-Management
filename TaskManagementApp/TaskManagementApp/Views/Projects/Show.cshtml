@@ -20,6 +20,39 @@
         <p><strong>@Model.Organizer.UserName</strong></p>
 
         <h4 class="mt-4">Membri proiect</h4>
+
+        <h4 class="mt-4">Task-uri ale proiectului</h4>
+
+        <div class="d-flex justify-content-end mb-3">
+            @if ((ViewBag.EsteOrganizator ?? false)
+                        || (ViewBag.EsteAdmin ?? false)
+                        || (ViewBag.EsteMembru ?? false))
+            {
+                <a asp-controller="Tasks"
+                   asp-action="New"
+                   asp-route-projectId="@Model.Id"
+                   class="btn btn-outline-success rounded-pill shadow-sm">
+                    ➕ Adaugă Task
+                </a>
+            }
+        </div>
+
+        @if (Model.Tasks != null && Model.Tasks.Any())
+        {
+            <div class="row g-3">
+                @foreach (var task in Model.Tasks)
+                 {
+                    <div class="col-md-4">
+                        @await Html.PartialAsync("~/Views/Shared/_TaskCardPartial.cshtml", task)
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">Nu există task-uri în acest proiect.</div>
+        }
+
         <ul class="list-group mb-4 rounded-3 overflow-hidden shadow-sm">
             @foreach (var member in Model.ProjectMembers)
             {

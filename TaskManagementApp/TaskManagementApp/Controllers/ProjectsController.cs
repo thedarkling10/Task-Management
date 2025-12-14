@@ -30,10 +30,25 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "Membru,Administrator")] //doar utilizatorii autentificati pot accesa
         public IActionResult Index()
         {
-            var projects = db.Projects
-                .Include(p => p.Organizer)
-                .OrderByDescending(p => p.Date)
-                .ToList();
+            var userId = _userManager.GetUserId(User);
+            List<Project> projects;
+            if (User.IsInRole("Administrator"))
+            {
+                projects = db.Projects
+                    .Include(p => p.Organizer)
+                    .OrderByDescending(p => p.Date)
+                    .ToList();
+            }
+            else
+            {
+                projects = db.Projects
+                    .Include(p => p.Organizer)
+                    .Include(p => p.ProjectMembers)
+                    .Where(p => p.ProjectMembers.Any(pm => pm.UserId == userId))
+                    .OrderByDescending(p => p.Date)
+                    .ToList();
+            }
+            
 
             ViewBag.Projects = projects;
 
@@ -43,14 +58,16 @@ namespace TaskManagementApp.Controllers
                 ViewBag.Alert = TempData["messageType"];
             }
 
-            return View();
+            return View(projects);
         }
 
         [Authorize(Roles = "Membru,Administrator")]
         public IActionResult Show(int id)
         {
+
             var project = db.Projects
                 .Include(p => p.Organizer)
+                .Include(p => p.Tasks)
                 .Include(p => p.ProjectMembers)
                     .ThenInclude(pm => pm.User)
                 .FirstOrDefault(p => p.Id == id);
@@ -61,6 +78,17 @@ namespace TaskManagementApp.Controllers
             }
 
             SetAccessRights(project);
+
+            var userId = _userManager.GetUserId(User);
+
+            bool esteMembru = project.ProjectMembers.Any(pm => pm.UserId == userId);
+
+            if (!esteMembru && project.OrganizerId != userId && !User.IsInRole("Administrator"))
+            {
+                TempData["message"] = "Nu aveți acces la acest proiect!";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("Index");
+            }
 
             return View(project);
         }
@@ -136,6 +164,9 @@ namespace TaskManagementApp.Controllers
             return RedirectToAction("Index");
         }
 
+
+
+
         [HttpPost]
         [Authorize(Roles = "Membru,Administrator")]
         public IActionResult Edit(int id, Project requestProject)
@@ -198,10 +229,16 @@ namespace TaskManagementApp.Controllers
             return RedirectToAction("Index");
         }
 
+
+
+
         [Authorize(Roles = "Membru,Administrator")]
         public IActionResult AddMember(int projectId)
         {
-            var project = db.Projects.Find(projectId);
+            var project = db.Projects
+                    .Include(p => p.ProjectMembers)
+                    .FirstOrDefault(p => p.Id == projectId);
+
             if (project is null)
                 return NotFound();
 
@@ -213,13 +250,22 @@ namespace TaskManagementApp.Controllers
             }
 
             //lista utilizatorilor disponibili pentru a fi adaugati ca membri
-            ViewBag.Users = db.Users
-                              .OrderBy(u => u.UserName)
-                              .ToList();
+            var memberIds = project.ProjectMembers.Select(pm => pm.UserId).ToList();
+
+            // lista userilor care NU sunt membri ai proiectului
+            var availableUsers = db.Users
+                                   .Where(u => !memberIds.Contains(u.Id))
+                                   .OrderBy(u => u.UserName)
+                                   .ToList();
+
+            ViewBag.Users = availableUsers;
 
             return View(project);
         }
 
+
+
+        
         [HttpPost]
         [Authorize(Roles = "Membru,Administrator")]
         public IActionResult AddMember (int projectId, string userId)

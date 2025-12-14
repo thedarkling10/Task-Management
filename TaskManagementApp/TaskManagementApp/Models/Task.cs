@@ -25,14 +25,14 @@ namespace TaskManagementApp.Models
         public string Status { get; set; }
       
         //cheie straina catre userul aignat
-        public string UserId { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        public string? UserId { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
-        public int ProjectId { get; set; }
-        public virtual Project Project { get; set; }
+        public int? ProjectId { get; set; }
+        public virtual Project? Project { get; set; }
 
         //relatie de navigare catre comentarii
-        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Comment>? Comments { get; set; }
 
 
 
