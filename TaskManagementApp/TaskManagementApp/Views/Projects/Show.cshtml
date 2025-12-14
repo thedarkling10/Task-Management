@@ -5,6 +5,12 @@
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success mt-3" role="alert">
+        @TempData["Message"]
+    </div>
+}
 
 <div class="container mt-5">
     <div class="card feature-card p-4 shadow-sm rounded-4">
@@ -13,10 +19,10 @@
         <p class="lead">@Model.Description</p>
 
         <span class="badge bg-primary mb-3">
-            Creat la: @Model.Date.ToShortDateString()
+            Created at: @Model.Date.ToShortDateString()
         </span>
 
-        <h4 class="mt-4">Organizator</h4>
+        <h4 class="mt-4">Project Manager</h4>
         <p><strong>@Model.Organizer.UserName</strong></p>
 
         <h4 class="mt-4">Project members</h4>

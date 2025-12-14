@@ -23,7 +23,7 @@
               asp-route-projectId="@Model.Id">
 
             <div class="mb-3">
-                <label class="form-label">Selectează utilizator</label>
+                <label class="form-label">Select an user</label>
                 <select name="userId" class="form-select">
                     @foreach (var user in ViewBag.Users)
                     {
@@ -32,12 +32,12 @@
                 </select>
             </div>
 
-            <button class="btn btn-primary btn-lg">Adaugă</button>
+            <button class="btn btn-primary btn-lg">Add</button>
 
             <a asp-controller="Projects"
                asp-action="Show"
                asp-route-id="@Model.Id"
-               class="btn btn-outline-secondary ms-2">Înapoi</a>
+               class="btn btn-outline-secondary ms-2">Back</a>
         </form>
     </div>
 </div>

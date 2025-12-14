@@ -14,16 +14,16 @@ namespace TaskManagementApp.Models
         //relatii:
         //proiecte create daca e organizator
 
-        public ICollection<Project> OrganizedProjects { get; set; }
+        public ICollection<Project>? OrganizedProjects { get; set; }
 
         //proiecte la care e membru
-        public ICollection<ProjectMember> ProjectMemberships{ get; set; }
+        public ICollection<ProjectMember>? ProjectMemberships{ get; set; }
 
         // taskuri asignate
-        public ICollection<Task> AssignedTasks { get; set; }
+        public ICollection<Task>? AssignedTasks { get; set; }
 
         //invitatii primite
-        public ICollection<ProjectInvitation> Invitations { get; set; }
+        public ICollection<ProjectInvitation>? Invitations { get; set; }
 
     }
 }

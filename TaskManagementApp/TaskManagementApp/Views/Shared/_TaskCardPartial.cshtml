@@ -19,14 +19,14 @@
     <p class="mt-2">
         <strong>Deadline:</strong> @Model.EndDate.ToString("dd/MM/yyyy") <br />
         <strong>User:</strong>
-        @(Model.User != null ? Model.User.UserName : "Neasignat")
+        @(Model.User != null ? Model.User.UserName : "Not assigned")
     </p>
 
     <a asp-controller="Tasks"
        asp-action="Show"
        asp-route-id="@Model.Id"
        class="btn btn-outline-primary rounded-pill w-100">
-        🔍 Vezi detalii
+        🔍 See details
     </a>
 
 </div>

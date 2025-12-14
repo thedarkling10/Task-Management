@@ -5,27 +5,35 @@
 namespace TaskManagementApp.Migrations
 {
     /// <inheritdoc />
-    public partial class ThirdMigration3 : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Projects_AspNetUsers_OrganizerId",
-                table: "Projects");
+                name: "FK_Tasks_AspNetUsers_UserId",
+                table: "Tasks");
 
             migrationBuilder.AlterColumn<string>(
-                name: "OrganizerId",
-                table: "Projects",
+                name: "UserId",
+                table: "Tasks",
                 type: "nvarchar(450)",
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(450)");
 
+            migrationBuilder.AlterColumn<int>(
+                name: "ProjectId",
+                table: "Tasks",
+                type: "int",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "int");
+
             migrationBuilder.AddForeignKey(
-                name: "FK_Projects_AspNetUsers_OrganizerId",
-                table: "Projects",
-                column: "OrganizerId",
+                name: "FK_Tasks_AspNetUsers_UserId",
+                table: "Tasks",
+                column: "UserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id");
         }
@@ -34,12 +42,12 @@ namespace TaskManagementApp.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Projects_AspNetUsers_OrganizerId",
-                table: "Projects");
+                name: "FK_Tasks_AspNetUsers_UserId",
+                table: "Tasks");
 
             migrationBuilder.AlterColumn<string>(
-                name: "OrganizerId",
-                table: "Projects",
+                name: "UserId",
+                table: "Tasks",
                 type: "nvarchar(450)",
                 nullable: false,
                 defaultValue: "",
@@ -47,10 +55,20 @@ namespace TaskManagementApp.Migrations
                 oldType: "nvarchar(450)",
                 oldNullable: true);
 
+            migrationBuilder.AlterColumn<int>(
+                name: "ProjectId",
+                table: "Tasks",
+                type: "int",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldNullable: true);
+
             migrationBuilder.AddForeignKey(
-                name: "FK_Projects_AspNetUsers_OrganizerId",
-                table: "Projects",
-                column: "OrganizerId",
+                name: "FK_Tasks_AspNetUsers_UserId",
+                table: "Tasks",
+                column: "UserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
