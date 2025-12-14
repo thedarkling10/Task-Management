@@ -1,8 +1,12 @@
 ﻿@{
-    ViewData["Title"] = "TaskFlow - Gestionează proiectele inteligent";
+    ViewData["Title"] = "TaskFlow - Elelvate your porject management!";
 }
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
 <style>
     .hero {
@@ -42,8 +46,8 @@
 </style>
 
 <div class="hero">
-    <h1>Organizează-ți proiectele într-un mod inteligent</h1>
-    <p>Platformă modernă de Task Management pentru echipe și proiecte colaborative.</p>
+    <h1>Organize your projects smartly</h1>
+    <p>Modern Task Management platform for teams and collaborative projects.</p>
 
     @if (!User.Identity.IsAuthenticated)
     {
@@ -53,7 +57,7 @@
     else
     {
         <a href="/Dashboard" class="btn btn-light btn-lg mt-3 me-2">Dashboard</a>
-        <a href="/Projects" class="btn btn-outline-light btn-lg mt-3">Proiectele mele</a>
+        <a href="/Projects" class="btn btn-outline-light btn-lg mt-3">My projects</a>
 
         @if (User.IsInRole("Admin"))
         {
@@ -64,27 +68,27 @@
 
 <!-- FEATURES -->
 <div class="container">
-    <h2 class="section-title">Funcționalități principale</h2>
+    <h2 class="section-title">Main Features</h2>
 
     <div class="row g-4">
         <div class="col-lg-4">
             <div class="card feature-card p-4">
-                <h4>✔ Gestionarea proiectelor</h4>
-                <p>Creezi proiecte, inviți membri și urmărești progresul fiecărei echipe.</p>
+                <h4>✔ Project Management</h4>
+                <p>Create projects, invite members, and track the progress of each team.</p>
             </div>
         </div>
 
         <div class="col-lg-4">
             <div class="card feature-card p-4">
-                <h4>📌 Task-uri inteligente</h4>
-                <p>Adaugă task-uri, asignază membri și setează statusuri pentru progres.</p>
+                <h4>📌 Smart Tasks</h4>
+                <p>Add tasks, assign members, and set statuses for progress.</p>
             </div>
         </div>
 
         <div class="col-lg-4">
             <div class="card feature-card p-4">
-                <h4>💬 Sistem de comentarii</h4>
-                <p>Colaborează direct în task-uri prin comentarii actualizate în timp real.</p>
+                <h4>💬 Comment System</h4>
+                <p>Collaborate directly on tasks through real-time updated comments.</p>
             </div>
         </div>
     </div>
@@ -92,40 +96,40 @@
 
 <!-- TESTIMONIALS -->
 <div class="container mt-5">
-    <h2 class="section-title">Ce spun utilizatorii</h2>
+    <h2 class="section-title">What Other Users Say</h2>
 
     <div class="row g-4">
         <div class="col-md-4">
             <div class="card p-4">
-                <p>„O platformă intuitivă care m-a ajutat să-mi coordonez echipa mult mai eficient!”</p>
+                <p>“An intuitive platform that helped me coordinate my team much more efficiently!”</p>
                 <strong>— Andrei, Project Manager</strong>
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="card p-4">
-                <p>„Îmi place dashboard-ul personalizat, văd totul foarte clar.”</p>
+                <p>“I like the personalized dashboard, I see everything very clearly.”</p>
                 <strong>— Ioana, Developer</strong>
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="card p-4">
-                <p>„Feature-ul cu AI este genial! Rezumatele rapide mă ajută zilnic.”</p>
+                <p>“The AI feature is brilliant! The quick summaries help me daily.”</p>
                 <strong>— Mihai, Team Lead</strong>
             </div>
         </div>
     </div>
 </div>
-
+ 
 <!-- CTA -->
 <div class="text-center my-5">
     @if (!User.Identity.IsAuthenticated)
     {
-        <a href="/Identity/Account/Register" class="btn btn-primary btn-lg px-5">Începe acum</a>
+        <a href="/Identity/Account/Register" class="btn btn-primary btn-lg px-5">Start Now</a>
     }
     else
     {
-        <a href="/Dashboard" class="btn btn-success btn-lg px-5">Mergi la Dashboard</a>
+        <a href="/Dashboard" class="btn btn-primary btn-lg px-5">Go To Dashboard</a>
     }
 </div>

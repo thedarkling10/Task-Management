@@ -48,9 +48,21 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="Content" class="form-label"></label>
-                <textarea asp-for="Content" class="form-control"></textarea>
+                <label asp-for="Content" class="form-label">Content (link image/ video/ site)</label>
+                <input asp-for="Content" class="form-control" placeholder="https://..."></input>
             </div>
+
+            <div class="mb-3">
+                <label asp-for="UserId" class="form-label">Assign To</label>
+                <select asp-for="UserId" class="form-select">
+                    <option value="">-- Not assigned --</option>
+                    @foreach (var user in ViewBag.Users)
+                    {
+                        <option value="@user.Id">@user.UserName</option>
+                    }
+                </select>
+            </div>
+
 
             <div class="row mb-3">
                 <div class="col">
@@ -73,6 +85,9 @@
             </div>
 
             <button class="btn btn-success rounded-pill">Creează</button>
+            <br />
+            <br />
+            <br />
 
         </form>
     </div>

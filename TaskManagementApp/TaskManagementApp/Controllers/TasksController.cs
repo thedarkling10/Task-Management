@@ -61,6 +61,15 @@ namespace TaskManagementApp.Controllers
             if (project == null)
                 return NotFound();
 
+            var members = db.ProjectMembers
+                            .Where(pm => pm.ProjectId == projectId)
+                            .Include(pm => pm.User)
+                            .Select(pm => pm.User)
+                            .ToList();
+
+            ViewBag.Users = members;
+
+
             var userId = _userManager.GetUserId(User);
 
             bool esteMembru = project.ProjectMembers
@@ -73,7 +82,12 @@ namespace TaskManagementApp.Controllers
                 return RedirectToAction("Show", "Projects", new { id = projectId });
             }
 
-            var task = new Models.Task { ProjectId = projectId };
+            var task = new Models.Task
+            {
+                ProjectId = projectId,
+                StartDate = DateTime.Today,
+                EndDate = DateTime.Today.AddDays(1)
+            };
             return View(task);
         }
 
@@ -100,17 +114,6 @@ namespace TaskManagementApp.Controllers
                 ModelState.AddModelError("StartDate", "Data de început nu poate fi după data de sfârșit.");
             }
 
-            TempData["DebugTask"] = $"Title: {task.Title}, ProjectId: {task.ProjectId}, StartDate: {task.StartDate}, EndDate: {task.EndDate}";
-
-            var modelErrors = ModelState
-                      .Where(ms => ms.Value.Errors.Count > 0)
-                      .Select(ms => $"{ms.Key}: {string.Join(", ", ms.Value.Errors.Select(e => e.ErrorMessage))}")
-                      .ToList();
-
-            if (modelErrors.Any())
-            {
-                TempData["DebugErrors"] = string.Join(" | ", modelErrors);
-            }
 
             if (ModelState.IsValid)
             {
@@ -137,6 +140,14 @@ namespace TaskManagementApp.Controllers
                 .Include(t => t.Project)
                 .FirstOrDefault(t => t.Id == Id);
 
+            var users = db.ProjectMembers
+                        .Where(pm => pm.ProjectId == task.ProjectId)
+                        .Include(pm => pm.User)
+                        .Select(pm => pm.User)
+                        .ToList();
+
+            ViewBag.Users = users;
+
             if (task == null)
                 return NotFound();
 
@@ -159,42 +170,50 @@ namespace TaskManagementApp.Controllers
         [Authorize(Roles = "Membru,Administrator")]
         public IActionResult Edit(int id, Models.Task requestTask)
         {
-            var task = db.Tasks.Find(id);
+            var task = db.Tasks
+                           .Include(t => t.Project)
+                            .FirstOrDefault(t => t.Id == id);
 
             if (task == null)
                 return NotFound();
 
             var userId = _userManager.GetUserId(User);
 
-            if(!User.IsInRole("Administrator"))
-            {
-                bool esteMembru = db.ProjectMembers
-                                    .Any(pm => pm.ProjectId == task.ProjectId && pm.UserId == userId);
-                if (!esteMembru && task.Project.OrganizerId != userId)
-                {
-                    TempData["message"] = "Nu aveți dreptul să editați acest task!";
-                    TempData["messageType"] = "alert-danger";
-                    return RedirectToAction("Show", "Projects", new { id = task.ProjectId });
-                }
-            }
+            bool esteAdmin = User.IsInRole("Administrator");
+            bool esteOrganizator = task.Project.OrganizerId == userId;
+            bool esteAsignat = task.UserId == userId;
+
+            if (!esteAdmin && !esteOrganizator && !esteAsignat)
+                return Forbid();
 
             if (requestTask.StartDate > requestTask.EndDate)
             {
-                ModelState.AddModelError("StartDate", "Data de început nu poate fi după data de sfârșit.");
+                ModelState.AddModelError("StartDate", "Start date can't be the same as End date.");
             }
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
+                requestTask.ProjectId = task.ProjectId;  // pentru a pastra ProjectId in view   
+                requestTask.Project= task.Project;      // pentru a pastra Project in view
                 return View(requestTask);
             }
 
-            task.Title = requestTask.Title;
-            task.Description = requestTask.Description;
-            task.Status = requestTask.Status;
-            task.Content = requestTask.Content;
-            task.StartDate = requestTask.StartDate;
-            task.EndDate = requestTask.EndDate;
-            task.UserId = requestTask.UserId;
+            if (esteAdmin || esteOrganizator)
+            {
+                // POT MODIFICA TOT
+                task.Title = requestTask.Title;
+                task.Description = requestTask.Description;
+                task.Content = requestTask.Content;
+                task.StartDate = requestTask.StartDate;
+                task.EndDate = requestTask.EndDate;
+                task.UserId = requestTask.UserId;
+                task.Status = requestTask.Status;
+            }
+            else if (esteAsignat)
+            {
+                // DOAR STATUS
+                task.Status = requestTask.Status;
+            }
 
             db.SaveChanges();
 
