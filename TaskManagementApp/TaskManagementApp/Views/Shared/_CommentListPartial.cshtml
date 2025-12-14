@@ -1,0 +1,25 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model IEnumerable<TaskManagementApp.Models.Comment>
+
+@if (Model == null || !Model.Any())
+{
+    <p class="text-muted">Nu există comentarii.</p>
+}
+else
+{
+    <ul class="list-group mb-3">
+        @foreach (var c in Model)
+        {
+            <li class="list-group-item">
+                <strong>@c.User.UserName</strong>
+                <span class="text-muted">(@c.Date.ToString("dd/MM/yyyy HH:mm"))</span>
+                <p>@c.Content</p>
+            </li>
+        }
+    </ul>
+}
+

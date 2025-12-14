@@ -1,0 +1,33 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model TaskManagementApp.Models.Task
+
+<div class="card shadow-sm p-3 rounded-4">
+
+    <h5>@Model.Title</h5>
+
+    <span class="badge
+        @(Model.Status == "Completed" ? "bg-success" :
+                    Model.Status == "In Progress" ? "bg-warning" :
+                    "bg-secondary")">
+        @Model.Status
+    </span>
+
+    <p class="mt-2">
+        <strong>Deadline:</strong> @Model.EndDate.ToString("dd/MM/yyyy") <br />
+        <strong>User:</strong>
+        @(Model.User != null ? Model.User.UserName : "Not assigned")
+    </p>
+
+    <a asp-controller="Tasks"
+       asp-action="Show"
+       asp-route-id="@Model.Id"
+       class="btn btn-outline-primary rounded-pill w-100">
+        🔍 See details
+    </a>
+
+</div>
+

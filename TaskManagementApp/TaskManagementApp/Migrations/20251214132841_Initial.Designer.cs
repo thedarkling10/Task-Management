@@ -12,8 +12,8 @@ using TaskManagementApp.Models;
 namespace TaskManagementApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251208081408_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20251214132841_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -282,7 +282,6 @@ namespace TaskManagementApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OrganizerId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
@@ -392,7 +391,7 @@ namespace TaskManagementApp.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -407,7 +406,6 @@ namespace TaskManagementApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -493,9 +491,7 @@ namespace TaskManagementApp.Migrations
                 {
                     b.HasOne("TaskManagementApp.Models.ApplicationUser", "Organizer")
                         .WithMany("OrganizedProjects")
-                        .HasForeignKey("OrganizerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OrganizerId");
 
                     b.Navigation("Organizer");
                 });
@@ -562,14 +558,11 @@ namespace TaskManagementApp.Migrations
                     b.HasOne("TaskManagementApp.Models.Project", "Project")
                         .WithMany("Tasks")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("TaskManagementApp.Models.ApplicationUser", "User")
                         .WithMany("AssignedTasks")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Project");
 
