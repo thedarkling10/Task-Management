@@ -39,7 +39,7 @@ namespace TaskManagementApp.Controllers
                 return RedirectToAction("Index", "Tasks");
             }
 
-            if (!UserHasAccessToProject(task.ProjectId))
+            if (!UserHasAccessToProject(task.ProjectId ?? 0))
             {
                 TempData["message"] = "Nu aveți acces la acest task!";
                 TempData["messageType"] = "alert-danger";
@@ -69,7 +69,7 @@ namespace TaskManagementApp.Controllers
                 return RedirectToAction("Index", "Tasks");
             }
 
-            if (!UserHasAccessToProject(task.ProjectId))
+            if (!UserHasAccessToProject(task.ProjectId ?? 0))
             {
                 TempData["message"] = "Nu aveți acces la acest task!";
                 TempData["messageType"] = "alert-danger";
@@ -103,7 +103,7 @@ namespace TaskManagementApp.Controllers
                 return RedirectToAction("Index", "Tasks");
             }
 
-            if (!UserHasAccessToProject(task.ProjectId))
+            if (!UserHasAccessToProject(task.ProjectId ?? 0))
             {
                 TempData["message"] = "Nu aveți acces la acest task!";
                 TempData["messageType"] = "alert-danger";
@@ -253,7 +253,7 @@ namespace TaskManagementApp.Controllers
                 return RedirectToAction("Index", "Tasks");
             }
 
-            if (!UserHasAccessToProject(comment.Task.ProjectId))
+            if (!UserHasAccessToProject(comment.Task.ProjectId ?? 0))
             {
                 TempData["message"] = "Nu aveți acces la acest comentariu!";
                 TempData["messageType"] = "alert-danger";
