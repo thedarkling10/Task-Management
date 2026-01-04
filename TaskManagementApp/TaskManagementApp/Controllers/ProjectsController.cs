@@ -26,29 +26,21 @@ namespace TaskManagementApp.Controllers
 
         //1. afisrea proiectelor (index)
         //afiseaza proiectele la care utilizatorul curent este membru, ordonate dupa data.
-        //administratorul vede toate proiectele
+        //administratorul vede tot proiectele din care face parte pentru ca pe toate le poate vedea in panel
         [Authorize(Roles = "Membru,Administrator")] //doar utilizatorii autentificati pot accesa
         public IActionResult Index()
         {
             var userId = _userManager.GetUserId(User);
             List<Project> projects;
-            if (User.IsInRole("Administrator"))
-            {
-                projects = db.Projects
-                    .Include(p => p.Organizer)
-                    .OrderByDescending(p => p.Date)
-                    .ToList();
-            }
-            else
-            {
-                projects = db.Projects
-                    .Include(p => p.Organizer)
-                    .Include(p => p.ProjectMembers)
-                    .Where(p => p.ProjectMembers.Any(pm => pm.UserId == userId))
-                    .OrderByDescending(p => p.Date)
-                    .ToList();
-            }
-            
+           
+           
+            projects = db.Projects
+                 .Include(p => p.Organizer)
+                 .Include(p => p.ProjectMembers)
+                 .Where(p => p.ProjectMembers.Any(pm => pm.UserId == userId))
+                 .OrderByDescending(p => p.Date)
+                 .ToList();
+          
 
             ViewBag.Projects = projects;
 
@@ -110,7 +102,7 @@ namespace TaskManagementApp.Controllers
             var userId = _userManager.GetUserId(User);
             if (string.IsNullOrEmpty(userId))
             {
-                TempData["message"] = "Trebuie să fiți logat pentru a crea un proiect!";
+                TempData["message"] = "You have to be logged in to create a project!";
                 TempData["messageType"] = "alert-danger";
                 return RedirectToAction("Index");
             }
@@ -130,10 +122,18 @@ namespace TaskManagementApp.Controllers
 
             if (ModelState.IsValid)
             {
+                project.ProjectMembers = new List<ProjectMember>();
+
+                project.ProjectMembers.Add(new ProjectMember
+                {
+                    UserId = userId,
+                    IsAccepted = true
+                });
+
                 db.Projects.Add(project);
                 db.SaveChanges();
 
-                TempData["message"] = "Proiectul a fost creat";
+                TempData["message"] = "Project was created";
                 TempData["messageType"] = "alert-success";
 
                 return RedirectToAction("Index");
@@ -239,6 +239,7 @@ namespace TaskManagementApp.Controllers
                     .Include(p => p.ProjectMembers)
                     .FirstOrDefault(p => p.Id == projectId);
 
+
             if (project is null)
                 return NotFound();
 
@@ -265,49 +266,116 @@ namespace TaskManagementApp.Controllers
 
 
 
-        
         [HttpPost]
         [Authorize(Roles = "Membru,Administrator")]
-        public IActionResult AddMember (int projectId, string userId)
+        public async Task<IActionResult> AddMember(int projectId, string userId)
         {
-            var project = db.Projects
-                            .Include(p => p.ProjectMembers)
-                            .FirstOrDefault(p => p.Id == projectId);
-            if (project is null)
-                return NotFound();
+            
+            var project = await db.Projects
+                                  .Include(p => p.ProjectMembers)
+                                  .FirstOrDefaultAsync(p => p.Id == projectId);
 
-            if (project.OrganizerId != _userManager.GetUserId(User) && !User.IsInRole("Administrator"))
+            if (project == null) return NotFound();
+
+            var currentUserId = _userManager.GetUserId(User);
+            if (project.OrganizerId != currentUserId && !User.IsInRole("Administrator"))
             {
-                TempData["message"] = "Nu aveți dreptul să adăugați membri acestui proiect!";
+                TempData["message"] = "You can't add members to the project!";
                 TempData["messageType"] = "alert-danger";
-                return RedirectToAction("Index");
+                return RedirectToAction("Show", new { id = projectId });
             }
 
-            if(!project.ProjectMembers.Any(pm => pm.UserId == userId))
+            var existingMember = project.ProjectMembers.FirstOrDefault(pm => pm.UserId == userId);
+
+            if (existingMember == null)
             {
-               db.ProjectMembers.Add(new ProjectMember
-               {
-                   ProjectId = projectId,
-                   UserId = userId
-               });
-                db.SaveChanges();
-                TempData["message"] = "Membrul a fost adăugat în proiect!";
+
+                var newMember = new ProjectMember
+                {
+                    ProjectId = projectId,
+                    UserId = userId,
+                    IsAccepted = false
+                };
+                db.ProjectMembers.Add(newMember);
+
+                var notif = new Notification
+                {
+                    UserId = userId,               
+                    SenderId = currentUserId,      
+                    Text = $"Invited you to join their project: '{project.Title}'.",
+                    Type = "Invite",               
+                    RelatedEntityId = projectId,   
+                    CreatedDate = DateTime.Now,
+                    IsRead = false
+                };
+                db.Notifications.Add(notif);
+
+                await db.SaveChangesAsync();
+
+                TempData["message"] = "Invite sent!";
                 TempData["messageType"] = "alert-success";
             }
             else
             {
-                TempData["message"] = "Utilizatorul este deja membru al proiectului";
-                TempData["messageType"] = "alert-warning";
+       
+
+                if (existingMember.IsAccepted)
+                {
+                    TempData["message"] = "User is already a member of the project.";
+                    TempData["messageType"] = "alert-warning";
+                }
+                else
+                {
+                    TempData["message"] = "User already has a pending request.";
+                    TempData["messageType"] = "alert-info";
+                }
             }
 
             return RedirectToAction("Show", new { id = projectId });
+        }
 
+        [HttpPost]
+        [Authorize(Roles = "Membru,Administrator")]
+        public IActionResult RemoveMember(int projectId, string memberId)
+        {
+            var project = db.Projects.Include(p => p.ProjectMembers)
+                                       .FirstOrDefault(p => p.Id == projectId);
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            //verificare drepturi: doar organizatorul sau administratorul pot elimina membri
+            if (project.OrganizerId != _userManager.GetUserId(User) && !User.IsInRole("Administrator"))
+            {
+                TempData["message"] = "Nu aveți dreptul să eliminați membri din acest proiect!";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("Show", new { id = projectId });
+            }
+
+            //gasim membrul de eliminat
+            var memberToRemove = project.ProjectMembers.FirstOrDefault(pm => pm.UserId == memberId);
+
+            if (memberToRemove != null)
+            {
+                db.ProjectMembers.Remove(memberToRemove);
+                db.SaveChanges();
+
+                TempData["message"] = "Membrul a fost eliminat din proiect!";
+                TempData["messageType"] = "alert-success";
+            }
+            else
+            {
+                TempData["message"] = "Membrul nu a fost găsit în proiect!";
+                TempData["messageType"] = "alert-warning";
+            }
+            return RedirectToAction("Show", new { id = projectId });
         }
         private void SetAccessRights(Project project)
         {
-            ViewBag.UserCurent = _userManager.GetUserId(User);
-            ViewBag.EsteAdmin = User.IsInRole("Administrator");
-            ViewBag.EsteOrganizator = project.OrganizerId == ViewBag.UserCurent;
-        }
+             ViewBag.UserCurent = _userManager.GetUserId(User);
+             ViewBag.EsteAdmin = User.IsInRole("Administrator");
+             ViewBag.EsteOrganizator = project.OrganizerId == ViewBag.UserCurent;
+         }
     }
 }

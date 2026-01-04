@@ -38,7 +38,8 @@ namespace TaskManagementApp.Controllers
             // 1. Proiectele în care apare utilizatorul
             var userProjects = db.Projects
                 .Include(p => p.ProjectMembers)
-                .Where(p => p.OrganizerId == userId || p.ProjectMembers.Any(pm => pm.UserId == userId))
+                .Where(p => p.OrganizerId == userId || p.ProjectMembers.Any(pm => pm.UserId == userId && pm.IsAccepted))
+                .OrderByDescending(p => p.Date)
                 .ToList();
 
             // 2. Task-urile asignate utilizatorului

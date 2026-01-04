@@ -23,7 +23,7 @@ namespace TaskManagementApp.Models
         public ICollection<Task>? AssignedTasks { get; set; }
 
         //invitatii primite
-        public ICollection<ProjectInvitation>? Invitations { get; set; }
+        public ICollection<Notification>? Notifications { get; set; }
 
     }
 }

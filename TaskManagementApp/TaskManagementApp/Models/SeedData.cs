@@ -140,10 +140,10 @@ namespace TaskManagementApp.Models
                     // ----------------------------------------------------
 
                     context.ProjectMembers.AddRange(
-                        new ProjectMember { ProjectId = p1.Id, UserId = organizerId },
-                        new ProjectMember { ProjectId = p1.Id, UserId = memberId },
-                        new ProjectMember { ProjectId = p2.Id, UserId = organizerId },
-                        new ProjectMember { ProjectId = p3.Id, UserId = memberId }
+                        new ProjectMember { ProjectId = p1.Id, UserId = organizerId, IsAccepted = true },
+                        new ProjectMember { ProjectId = p1.Id, UserId = memberId, IsAccepted = false},
+                        new ProjectMember { ProjectId = p2.Id, UserId = organizerId, IsAccepted = true },
+                        new ProjectMember { ProjectId = p3.Id, UserId = memberId, IsAccepted = false }
                     );
 
                     // ----------------------------------------------------

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<TaskManagementApp.Models.Project>
+@{
+    ViewData["Title"] = "Admin - Projects";
+}
+
+<div class="container mt-4">
+    <h3>Gestionare Proiecte</h3>
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Members</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var proj in Model)
+            {
+                <tr>
+                    <td>@proj.Title</td>
+                    <td>@proj.ProjectMembers.Count</td>
+                    <td>
+                        <a asp-controller="Projects" asp-action="Show" asp-route-id="@proj.Id" class="btn btn-info btn-sm text-white">
+                            Vezi / Editează
+                        </a>
+
+                        <form asp-action="DeleteProject" asp-route-id="@proj.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('Ștergi acest proiect și toate taskurile lui?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Șterge</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
