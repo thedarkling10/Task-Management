@@ -1,5 +1,46 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model TaskManagementApp.Models.Comment
+
 @{
+    ViewBag.Title = "Detalii comentariu";
+    var userCurentId = User.FindFirst("sub")?.Value;
 }
+
+<div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Detalii Comentariu</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Task:</dt>
+            <dd class="col-sm-9"><strong>@Model.Task.Title</strong></dd>
+
+            <dt class="col-sm-3">Postat de:</dt>
+            <dd class="col-sm-9">@Model.User.UserName</dd>
+
+            <dt class="col-sm-3">Data:</dt>
+            <dd class="col-sm-9">@Model.Date.ToString("dd.MM.yyyy HH:mm")</dd>
+        </dl>
+
+        <hr />
+
+        <h5>Conținut:</h5>
+        <div class="p-3 border rounded bg-light">
+            <p class="mb-0">@Model.Content</p>
+        </div>
+
+        <div class="mt-4">
+            @if (Model.UserId == userCurentId || User.IsInRole("Administrator"))
+            {
+                <a href="/Comments/Edit/@Model.Id" class="btn btn-warning me-2">✏️ Editează</a>
+
+                <form method="post" action="/Comments/Delete/@Model.Id"
+                      style="display:inline" onsubmit="return confirm('Sigur doriți să ștergeți acest comentariu?');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">🗑️ Șterge</button>
+                </form>
+            }
+
+            <a class="btn btn-secondary float-end" href="/Comments?taskId=@Model.TaskId">Înapoi la lista de comentarii</a>
+        </div>
+    </div>
+</div>

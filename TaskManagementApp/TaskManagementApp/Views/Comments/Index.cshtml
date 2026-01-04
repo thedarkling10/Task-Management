@@ -1,5 +1,57 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<TaskManagementApp.Models.Comment>
 @{
+    ViewBag.Title = "Comentarii";
+    var task = ViewBag.Task;
+    var userCurentId = User.FindFirst("sub")?.Value; // Acces mai simplu la UserID
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Comentarii pentru task-ul: @task.Title</h2>
+    <a class="btn btn-primary" href="/Comments/New?taskId=@task.Id">Adaugă comentariu nou</a>
+</div>
+
+<div class="mb-4">
+    <a href="/Tasks/Show/@task.Id" class="btn btn-secondary">Înapoi la Task</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info" role="alert">
+        Nu există comentarii. Fii primul care adaugă unul!
+    </div>
+}
+else
+{
+    foreach (var comment in Model)
+    {
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="card-title mb-1">
+                            @comment.User.UserName
+                        </h6>
+                        <small class="text-muted">
+                            Postat la: @comment.Date.ToString("dd.MM.yyyy HH:mm")
+                        </small>
+                        <p class="card-text mt-2">@comment.Content</p>
+                    </div>
+
+                    <div class="btn-group-vertical" role="group">
+                        <a href="/Comments/Show/@comment.Id" class="btn btn-sm btn-info mb-1">Vezi</a>
+
+                        @if (comment.UserId == userCurentId || User.IsInRole("Administrator"))
+                        {
+                            <a href="/Comments/Edit/@comment.Id" class="btn btn-sm btn-warning mb-1">Editează</a>
+
+                            <form method="post" action="/Comments/Delete/@comment.Id"
+                                  onsubmit="return confirm('Sigur doriți să ștergeți acest comentariu?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Șterge</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 }
