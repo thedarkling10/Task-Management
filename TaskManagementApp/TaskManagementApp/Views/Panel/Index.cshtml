@@ -1,0 +1,59 @@
+﻿@model IEnumerable<TaskManagementApp.Models.Project>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">🛡️ Admin Panel</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Users</h5>
+                    <p class="card-text display-6">@ViewBag.TotalUsers</p>
+                    <a asp-action="Users" class="btn btn-light btn-sm">Manage</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Projects</h5>
+                    <p class="card-text display-6">@ViewBag.TotalProjects</p>
+                    <a asp-action="Projects" class="btn btn-light btn-sm">Manage</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Tasks</h5>
+                    <p class="card-text display-6">@ViewBag.TotalTasks</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Last Created Projects</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Organizer ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Id</td>
+                    <td>@p.Title</td>
+                    <td>@p.OrganizerId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

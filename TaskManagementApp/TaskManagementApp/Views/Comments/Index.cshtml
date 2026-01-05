@@ -1,23 +1,23 @@
 ﻿@model List<TaskManagementApp.Models.Comment>
 @{
-    ViewBag.Title = "Comentarii";
+    ViewBag.Title = "Comments";
     var task = ViewBag.Task;
     var userCurentId = User.FindFirst("sub")?.Value; // Acces mai simplu la UserID
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Comentarii pentru task-ul: @task.Title</h2>
-    <a class="btn btn-primary" href="/Comments/New?taskId=@task.Id">Adaugă comentariu nou</a>
+    <a class="btn btn-primary" href="/Comments/New?taskId=@task.Id">Add new comment</a>
 </div>
 
 <div class="mb-4">
-    <a href="/Tasks/Show/@task.Id" class="btn btn-secondary">Înapoi la Task</a>
+    <a href="/Tasks/Show/@task.Id" class="btn btn-secondary">Back to Task</a>
 </div>
 
 @if (Model.Count == 0)
 {
     <div class="alert alert-info" role="alert">
-        Nu există comentarii. Fii primul care adaugă unul!
+        No comments! Be the first to add one!
     </div>
 }
 else
@@ -42,11 +42,11 @@ else
 
                         @if (comment.UserId == userCurentId || User.IsInRole("Administrator"))
                         {
-                            <a href="/Comments/Edit/@comment.Id" class="btn btn-sm btn-warning mb-1">Editează</a>
+                            <a href="/Comments/Edit/@comment.Id" class="btn btn-sm btn-warning mb-1">Edit</a>
 
                             <form method="post" action="/Comments/Delete/@comment.Id"
-                                  onsubmit="return confirm('Sigur doriți să ștergeți acest comentariu?');">
-                                <button type="submit" class="btn btn-sm btn-danger">Șterge</button>
+                                  onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                             </form>
                         }
                     </div>

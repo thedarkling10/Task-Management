@@ -5,29 +5,87 @@
 
 @model TaskManagementApp.Models.Task
 
-<div class="card shadow-sm p-3 rounded-4">
+@{
+    // definim culorile in functie de status direct aici 
+    string borderClass = Model.Status == "Completed" ? "border-success" :
+                         Model.Status == "In Progress" ? "border-warning" : "border-secondary";
 
-    <h5>@Model.Title</h5>
+    string badgeClass = Model.Status == "Completed" ? "bg-success" :
+                        Model.Status == "In Progress" ? "bg-warning text-dark" : "bg-secondary";
 
-    <span class="badge
-        @(Model.Status == "Completed" ? "bg-success" :
-                    Model.Status == "In Progress" ? "bg-warning" :
-                    "bg-secondary")">
-        @Model.Status
-    </span>
+    // formatam numele utilizatorului sau punem un text default
+    string userName = Model.User != null ? Model.User.UserName : "Unassigned";
+}
 
-    <p class="mt-2">
-        <strong>Deadline:</strong> @Model.EndDate.ToString("dd/MM/yyyy") <br />
-        <strong>User:</strong>
-        @(Model.User != null ? Model.User.UserName : "Not assigned")
-    </p>
+<div class="card shadow-sm h-100 border-0 rounded-3 task-card" style="border-left: 5px solid !important;">
+    <style>
+        .task-card {
+            border-left-color: var(--bs-secondary);
+        }
+    </style>
 
-    <a asp-controller="Tasks"
-       asp-action="Show"
-       asp-route-id="@Model.Id"
-       class="btn btn-outline-primary rounded-pill w-100">
-        🔍 See details
-    </a>
+    <div class="@borderClass ps-2 h-100 rounded-3">
+        <div class="card-body d-flex flex-column">
 
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <h5 class="card-title fw-bold text-dark text-truncate mb-0" title="@Model.Title">
+                    @Model.Title
+                </h5>
+                <span class="badge rounded-pill @badgeClass small">
+                    @Model.Status
+                </span>
+            </div>
+
+            <div class="mb-4 text-muted small flex-grow-1">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-calendar-event me-2 text-primary opacity-75"></i>
+                    <span>
+                        <span class="fw-semibold">Deadline:</span>
+                        @Model.EndDate.ToString("dd MMM yyyy")
+                    </span>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-person-circle me-2 text-primary opacity-75"></i>
+                    <span>
+                        <span class="fw-semibold">Assigned to:</span>
+                        @userName
+                    </span>
+                </div>
+            </div>
+
+            <div class="mt-auto">
+                <a asp-controller="Tasks"
+                   asp-action="Show"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-light text-primary w-100 fw-medium border transition-hover">
+                    View Details <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
+<script>
+</script>
+
+<style>
+   
+    .border-success.ps-2 {
+        border-left: 4px solid #198754 !important;
+    }
+
+    .border-warning.ps-2 {
+        border-left: 4px solid #ffc107 !important;
+    }
+
+    .border-secondary.ps-2 {
+        border-left: 4px solid #6c757d !important;
+    }
+
+    .transition-hover:hover {
+        background-color: #f8f9fa;
+        border-color: #0d6efd !important;
+        color: #0d6efd !important;
+    }
+</style>

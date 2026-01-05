@@ -17,16 +17,16 @@ namespace TaskManagementApp.Models
         public DbSet<Task> Tasks { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ProjectMember> ProjectMembers { get; set; }
-        public DbSet<ProjectInvitation> ProjectInvitations { get; set; }
+        public DbSet<Notification> Notifications{ get; set; }
         public DbSet<Summary> ProjectSummaries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // 1. Configurare cheie compusa pentru ProjectMember (M-la-M)
+       
             modelBuilder.Entity<ProjectMember>()
-                .HasKey(pm => new { pm.ProjectId, pm.UserId }); // <- Aceasta linie defineste cheia compusa
+                .HasKey(pm => new { pm.ProjectId, pm.UserId });
 
             modelBuilder.Entity<ProjectMember>()
                 .HasOne(pm => pm.Project)
@@ -45,18 +45,18 @@ namespace TaskManagementApp.Models
                 .HasOne(t => t.Project)
                 .WithMany(p => p.Tasks)
                 .HasForeignKey(t => t.ProjectId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<ProjectInvitation>()
-                .HasOne(i => i.InvitedUser)
-                .WithMany(u => u.Invitations)
-                .HasForeignKey(i => i.InvitedUserId)
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Notification>()
+                .HasOne(i => i.User)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(i => i.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<ProjectInvitation>()
-                .HasOne(i => i.Organizer)
+            modelBuilder.Entity<Notification>()
+                .HasOne(i => i.Sender)
                 .WithMany()
-                .HasForeignKey(i => i.OrganizerId)
+                .HasForeignKey(i => i.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Comment>()

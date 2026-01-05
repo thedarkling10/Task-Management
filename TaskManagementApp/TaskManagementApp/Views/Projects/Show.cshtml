@@ -1,18 +1,286 @@
 ﻿@model TaskManagementApp.Models.Project
 
 @{
+    var lastSummary = Model.ProjectSummaries?
+    .OrderByDescending(s => s.GeneratedAt)
+    .FirstOrDefault();
+
     ViewData["Title"] = Model.Title;
+
+    var currentUserId = ViewBag.UserCurent as string;
+    var esteAdmin = ViewBag.EsteAdmin ?? false;
+    var esteOrganizator = ViewBag.EsteOrganizator ?? false;
+
+    IEnumerable<TaskManagementApp.Models.Task> visibleTasks = Model.Tasks ?? new List<TaskManagementApp.Models.Task>();
+
+    //daca nu e admin sau org, pastram doar taskurile  userului curent
+    if (!esteAdmin && !esteOrganizator)
+    {
+        visibleTasks = visibleTasks.Where(t => t.UserId == currentUserId);
+    }
 }
 
+<style>
+    .project-header {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .member-card {
+        background-color: #f8f9fa;
+        border-left: 4px solid #0d6efd;
+    }
+
+    .stats-card {
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+</style>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
-@if (TempData["Message"] != null)
+@* @if (TempData["Message"] != null)
 {
     <div class="alert alert-success mt-3" role="alert">
         @TempData["Message"]
     </div>
-}
+} *@
 
-<div class="container mt-5">
+<div class="container mt-4">
+
+    <div class="project-header shadow">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1 class="display-5 fw-bold">@Model.Title</h1>
+                <p class="lead mb-0 opacity-75">@Model.Description</p>
+            </div>
+            <span class="badge bg-light text-primary fs-6 px-3 py-2 rounded-pill shadow-sm">
+                📅 @Model.Date.ToShortDateString()
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold text-secondary">
+                    📌 Tasks (@visibleTasks.Count())
+                </h3>
+
+                @if ((ViewBag.EsteOrganizator ?? false) || (ViewBag.EsteAdmin ?? false))
+                {
+                    <a asp-controller="Tasks"
+                       asp-action="New"
+                       asp-route-projectId="@Model.Id"
+                       class="btn btn-primary rounded-pill shadow-sm px-4">
+                        ➕ Add task
+                    </a>
+                }
+            </div>
+
+            @if (visibleTasks != null &&visibleTasks.Any())
+            {
+                <div class="row g-3">
+                    @foreach (var task in visibleTasks)
+                    {
+                        <div class="col-md-6">
+                            @await Html.PartialAsync("~/Views/Shared/_TaskCardPartial.cshtml", task)
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 bg-light rounded-4 border border-dashed">
+                    <h4 class="text-muted">You don't have any tasks assigned.</h4>
+                    <p class="text-muted small">Wait for a task from the project manager.</p>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4 mt-4 mt-lg-0">
+
+            <div class="card shadow-sm border-0 mb-4 rounded-4">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-muted fw-bold small">Project Manager</h6>
+                    <div class="d-flex align-items-center mt-2">
+                        <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 40px; height: 40px;">
+                            @Model.Organizer.UserName.Substring(0, 1).ToUpper()
+                        </div>
+                        <div>
+                            <h5 class="mb-0">@Model.Organizer.UserName</h5>
+                            <small class="text-muted">Project Manager</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (ViewBag.EsteOrganizator || ViewBag.EsteAdmin)
+            {
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold mb-0">Project members</h5>
+                            <a asp-controller="Projects"
+                               asp-action="AddMember"
+                               asp-route-projectId="@Model.Id"
+                               class="btn btn-sm btn-outline-primary rounded-pill">
+                                + Invite
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var member in Model.ProjectMembers)
+                            {
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2">👤</div>
+                                        <div>
+                                            <div class="fw-bold">
+                                                @member.User.UserName
+
+                                                @if (!member.IsAccepted)
+                                                {
+                                                    <span class="badge bg-warning text-dark ms-2" style="font-size: 0.65em;">
+                                                        <i class="bi bi-hourglass-split"></i> Pending Invite
+                                                    </span>
+                                                }
+                                            </div>
+                                            <small class="text-muted" style="font-size: 0.75rem;">@member.User.Email</small>
+                                        </div>
+                                    </div>
+
+                                    @if (member.User.Id == Model.OrganizerId)
+                                    {
+                                        <span class="badge bg-primary rounded-pill">Organizer</span>
+                                    }
+                                    else
+                                    {
+                                        <form asp-controller="Projects" asp-action="RemoveMember" method="post" class="d-inline">
+                                            <input type="hidden" name="projectId" value="@Model.Id" />
+                                            <input type="hidden" name="memberId" value="@member.User.Id" />
+
+                                            <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none"
+                                                    title="@(member.IsAccepted ? "Remove member" : "Cancel invitation")"
+                                                    onclick="return confirm('@(member.IsAccepted ? "Are you sure you want to remove this member?" : "Are you sure you want to cancel this invitation?")');">
+
+                                                @if (!member.IsAccepted)
+                                                {
+                                                    <small class="fw-bold"><i class="bi bi-x-circle"></i> Cancel</small>
+                                                }
+                                                else
+                                                {
+                                                    <small>Remove</small>
+                                                }
+                                            </button>
+                                        </form>
+                                    }
+                            
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="stats-card mt-3">
+                    <h3 class="fw-bold text-primary mb-0">@Model.ProjectMembers.Count()</h3>
+                    <p class="text-muted mb-0">Project members</p>
+                    <small class="text-muted" style="font-size: 0.8rem">Together we work better!</small>
+                </div>
+            }
+
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-header bg-white border-0 pt-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">🤖 AI Project Summary</h5>
+
+            @if (ViewBag.EsteOrganizator || ViewBag.EsteAdmin)
+            {
+                <form asp-controller="Projects"
+                      asp-action="GenerateSummary"
+                      method="post"
+                      class="d-inline">
+                    <input type="hidden" name="projectId" value="@Model.Id" />
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-primary rounded-pill">
+                        🔄 Update
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="card-body">
+        @if (lastSummary != null)
+        {
+            <p class="text-muted small mb-2">
+                Last updated: @lastSummary.GeneratedAt.ToString("dd MMM yyyy HH:mm")
+            </p>
+
+            <p class="mb-0" style="white-space: pre-line;">
+                @lastSummary.Content
+            </p>
+        }
+        else
+        {
+            <p class="text-muted fst-italic mb-0">
+                There are no recent updates on this project.
+            </p>
+        }
+    </div>
+</div>
+
+
+            @if (ViewBag.EsteOrganizator || ViewBag.EsteAdmin)
+            {
+                <div class="mt-4 pt-3 border-top">
+                    <h6 class="text-muted text-uppercase small mb-3">Administration</h6>
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Projects"
+                           asp-action="Edit"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-outline-secondary">
+                            ⚙️ Edit project
+                        </a>
+
+                        <form asp-controller="Projects"
+                              asp-action="Delete"
+                              asp-route-id="@Model.Id"
+                              method="post">
+                            <button class="btn btn-outline-danger w-100"
+                                    onclick="return confirm('ATTENTIONT! This project will be deleted permanently. Do you wish to continue?')">
+                                🗑 Delete project
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <br />
+                <br />
+                <br />
+                
+            }
+
+        </div>
+        <br />
+        <br />
+        <br />
+    </div>
+    <br />
+    <br />
+    <br />
+</div>
+
+
+@* <div class="container mt-5">
     <div class="card feature-card p-4 shadow-sm rounded-4">
 
         <h1 class="mb-3">@Model.Title</h1>
@@ -25,16 +293,42 @@
         <h4 class="mt-4">Project Manager</h4>
         <p><strong>@Model.Organizer.UserName</strong></p>
 
-        <h4 class="mt-4">Project members</h4>
-        <ul class="list-group mb-4 rounded-3 overflow-hidden shadow-sm">
-            @foreach (var member in Model.ProjectMembers)
-            {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    @member.User.UserName
-                    <span class="badge bg-secondary rounded-pill">@member.User.Email</span>
-                </li>
-            }
-        </ul>
+        @if (ViewBag.EsteOrganizator || ViewBag.EsteAdmin)
+        {
+            <h4 class="mt-4">Project members</h4>
+            <ul class="list-group mb-4 rounded-3 overflow-hidden shadow-sm">
+                <a asp-controller="Projects"
+                   asp-action="AddMember"
+                   asp-route-projectId="@Model.Id"
+                   class="btn btn-outline-success rounded-pill ms-2 shadow-sm">
+                    ➕ Add members
+                </a>
+                @foreach (var member in Model.ProjectMembers)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @member.User.UserName
+                        <span class="badge bg-secondary rounded-pill">@member.User.Email</span>
+                    </li>
+                    @if (member.User.Id != Model.OrganizerId)
+                    {
+                        <form asp-controller="Projects" asp-action="RemoveMember" method="post" class="d-inline">
+                            <input type="hidden" name="projectId" value="@Model.Id" />
+                            <input type="hidden" name="memberId" value="@member.User.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Sigur doriți să eliminați acest membru?');">
+                                ❌ Remove
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted fst-italic" style="font-size: 0.8rem;">Organizer</span>
+                    }
+                }
+                
+            </ul>
+        }
+)
+        
 
         <h4 class="mt-4">Tasks</h4>
 
@@ -65,7 +359,7 @@
         }
         else
         {
-            <div class="alert alert-info">Nu există task-uri în acest proiect.</div>
+            <div class="alert alert-info">You don't have any tasks assigned in this project.</div>
         }
 
     
@@ -104,4 +398,4 @@
         </div>
 
     </div>
-</div>
+</div> *@

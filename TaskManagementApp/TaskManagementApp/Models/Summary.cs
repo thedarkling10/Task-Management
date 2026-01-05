@@ -9,12 +9,12 @@ namespace TaskManagementApp.Models
 
         [Required]
         public int ProjectId { get; set; }
-        public virtual Project Project { get; set; }
+        public virtual Project? Project { get; set; }
 
         [Required]
         public string Content { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime GeneratedAt { get; set; } 
 
 
     }

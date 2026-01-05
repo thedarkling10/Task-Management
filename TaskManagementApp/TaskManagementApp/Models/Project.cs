@@ -26,7 +26,7 @@ namespace TaskManagementApp.Models
 
         public ICollection<ProjectMember>? ProjectMembers { get; set; }
         public ICollection<Summary>? ProjectSummaries { get; set; } // Pentru AI Summary
-        public ICollection<ProjectInvitation>? Invitations { get; set; } // Invitațiile trimise din acest proiect
+        public ICollection<Notification>? Invitations { get; set; } // Invitațiile trimise din acest proiect
 
     }
 }

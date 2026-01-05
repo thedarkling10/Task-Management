@@ -10,11 +10,11 @@ namespace TaskManagementApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        // Ad?ug?m referin?ele c?tre DB ?i UserManager
+        // Adaugam referintele catre db si UserManager
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        // Le inject?m în constructor
+        // Le injectam in constructor
         public HomeController(
             ILogger<HomeController> logger,
             ApplicationDbContext context,
@@ -38,7 +38,8 @@ namespace TaskManagementApp.Controllers
             // 1. Proiectele în care apare utilizatorul
             var userProjects = db.Projects
                 .Include(p => p.ProjectMembers)
-                .Where(p => p.OrganizerId == userId || p.ProjectMembers.Any(pm => pm.UserId == userId))
+                .Where(p => p.OrganizerId == userId || p.ProjectMembers.Any(pm => pm.UserId == userId && pm.IsAccepted))
+                .OrderByDescending(p => p.Date)
                 .ToList();
 
             // 2. Task-urile asignate utilizatorului
