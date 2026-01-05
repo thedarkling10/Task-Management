@@ -39,7 +39,7 @@ namespace TaskManagementApp.Controllers
 
             if (task.Project.OrganizerId != userId && !esteMembru && !User.IsInRole("Administrator"))
             {
-                TempData["ErrorMessage"] = "Nu ai permisiunea să vizualizezi acest task.";
+                TempData["ErrorMessage"] = "You don't have permission to view this task.";
                 TempData["messageType"] = "alert-danger";
                 return RedirectToAction("Show", "Projects", new { id = task.ProjectId});
             }
@@ -77,7 +77,7 @@ namespace TaskManagementApp.Controllers
 
             if(!esteMembru && project.OrganizerId != userId)
             {
-                TempData["ErrorMessage"] = "Nu ai permisiunea să adaugi task-uri în acest proiect.";
+                TempData["ErrorMessage"] = "You don't have permission to add tasks to this project.";
                 TempData["messageType"] = "alert-danger";
                 return RedirectToAction("Show", "Projects", new { id = projectId });
             }
@@ -111,7 +111,7 @@ namespace TaskManagementApp.Controllers
 
             if (task.StartDate > task.EndDate)
             {
-                ModelState.AddModelError("StartDate", "Data de început nu poate fi după data de sfârșit.");
+                ModelState.AddModelError("StartDate", "Start Date can't preceed End Date.");
             }
 
 
@@ -120,13 +120,13 @@ namespace TaskManagementApp.Controllers
 
                 db.Tasks.Add(task);
                 db.SaveChanges();
-                TempData["message"] = "Task-ul a fost creat!";
+                TempData["message"] = "Task has been created!";
                 TempData["messageType"] = "alert-success";
                 return RedirectToAction("Show", "Projects", new { id = task.ProjectId });
             }
             else
             {
-                TempData["message"] = "Task-ul NU a fost creat!";
+                TempData["message"] = "Task hasn't been created!";
                 TempData["messageType"] = "alert-danger";
             }
             return View(task);
@@ -158,7 +158,7 @@ namespace TaskManagementApp.Controllers
 
             if (!esteMembru && task.Project.OrganizerId != userId && !User.IsInRole("Administrator"))
             {
-                TempData["message"] = "Nu aveți dreptul să editați acest task!";
+                TempData["message"] = "You don't have permission to edit the task!";
                 TempData["messageType"] = "alert-danger";
                 return RedirectToAction("Show", "Projects", new { id = task.ProjectId });
             }
@@ -217,7 +217,7 @@ namespace TaskManagementApp.Controllers
 
             db.SaveChanges();
 
-            TempData["message"] = "Task-ul a fost editat!";
+            TempData["message"] = "Task edited successfully!";
             TempData["messageType"] = "alert-success";
 
             return RedirectToAction("Show", "Projects", new { id = task.ProjectId });
@@ -240,7 +240,7 @@ namespace TaskManagementApp.Controllers
 
             if (!esteMembru && !User.IsInRole("Administrator"))
             {
-                TempData["message"] = "Nu aveți dreptul să ștergeți acest task!";
+                TempData["message"] = "You don't have permssion to delete the task!";
                 TempData["messageType"] = "alert-danger";
                 return RedirectToAction("Show", "Projects", new { id = task.ProjectId });
             }
@@ -248,7 +248,7 @@ namespace TaskManagementApp.Controllers
             db.Tasks.Remove(task);
             db.SaveChanges();
 
-            TempData["message"] = "Task-ul a fost șters!";
+            TempData["message"] = "Task deleted successfully!";
             TempData["messageType"] = "alert-success";
 
             return RedirectToAction("Show", "Projects", new { id = task.ProjectId });

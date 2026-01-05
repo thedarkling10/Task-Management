@@ -52,7 +52,7 @@ namespace TaskManagementApp.Controllers
 
                 await _userManager.DeleteAsync(user); 
 
-                TempData["message"] = "Utilizatorul a fost eliminat definitiv.";
+                TempData["message"] = "User permanently deleted.";
                 TempData["messageType"] = "alert-success";
             }
             return RedirectToAction("Users");
@@ -76,7 +76,7 @@ namespace TaskManagementApp.Controllers
                 db.Projects.Remove(project); // cascade delete va sterge taskurile si comentariile
                 await db.SaveChangesAsync();
 
-                TempData["message"] = "Proiectul a fost șters forțat de Administrator.";
+                TempData["message"] = "The project has been forced deleted by Admin.";
                 TempData["messageType"] = "alert-success";
             }
             return RedirectToAction("Projects");

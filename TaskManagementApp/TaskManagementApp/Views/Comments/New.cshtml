@@ -1,6 +1,6 @@
 ﻿@model TaskManagementApp.Models.Comment
 @{
-    ViewBag.Title = "Comentariu nou";
+    ViewBag.Title = "New Comment";
     var task = ViewBag.Task;
 }
 
@@ -15,6 +15,6 @@
         <span asp-validation-for="Content" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-success">Adaugă</button>
-    <a class="btn btn-secondary" href="/Comments?taskId=@task.Id">Renunță</a>
+    <button type="submit" class="btn btn-success">Add</button>
+    <a class="btn btn-secondary" href="/Comments?taskId=@task.Id">Cancel</a>
 </form>

@@ -11,3 +11,4 @@ obj/
 
 # Temporary files
 *.tmp
+/TaskManagementApp/TaskManagementApp/appsettings.json

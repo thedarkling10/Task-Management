@@ -1,13 +1,13 @@
 ﻿@model TaskManagementApp.Models.Comment
 
 @{
-    ViewBag.Title = "Detalii comentariu";
+    ViewBag.Title = "Comment Details";
     var userCurentId = User.FindFirst("sub")?.Value;
 }
 
 <div class="card shadow-lg">
     <div class="card-header bg-primary text-white">
-        <h4 class="mb-0">Detalii Comentariu</h4>
+        <h4 class="mb-0">Comment Details</h4>
     </div>
     <div class="card-body">
         <dl class="row">
@@ -31,16 +31,16 @@
         <div class="mt-4">
             @if (Model.UserId == userCurentId || User.IsInRole("Administrator"))
             {
-                <a href="/Comments/Edit/@Model.Id" class="btn btn-warning me-2">✏️ Editează</a>
+                <a href="/Comments/Edit/@Model.Id" class="btn btn-warning me-2">✏️ Edit</a>
 
                 <form method="post" action="/Comments/Delete/@Model.Id"
-                      style="display:inline" onsubmit="return confirm('Sigur doriți să ștergeți acest comentariu?');">
+                      style="display:inline" onsubmit="return confirm('Are you sure you want to delete the comment?');">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-danger">🗑️ Șterge</button>
+                    <button type="submit" class="btn btn-danger">🗑️ Delete</button>
                 </form>
             }
 
-            <a class="btn btn-secondary float-end" href="/Comments?taskId=@Model.TaskId">Înapoi la lista de comentarii</a>
+            <a class="btn btn-secondary float-end" href="/Comments?taskId=@Model.TaskId">Back to Comment List</a>
         </div>
     </div>
 </div>

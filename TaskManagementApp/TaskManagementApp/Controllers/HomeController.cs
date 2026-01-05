@@ -10,11 +10,11 @@ namespace TaskManagementApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        // Ad?ug?m referin?ele c?tre DB ?i UserManager
+        // Adaugam referintele catre db si UserManager
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        // Le inject?m în constructor
+        // Le injectam in constructor
         public HomeController(
             ILogger<HomeController> logger,
             ApplicationDbContext context,

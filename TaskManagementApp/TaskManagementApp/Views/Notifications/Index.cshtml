@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<TaskManagementApp.Models.Notification>
 
 <div class="container mt-5">
-    <h2><i class="bi bi-inbox"></i> Inbox-ul meu</h2>
+    <h2><i class="bi bi-inbox"></i>My Inbox</h2>
     <hr />
 
     <div class="list-group">
@@ -12,12 +12,12 @@
                     <h5 class="mb-1">
                         @if (notif.Type == "Invite")
                         {
-                            <span class="badge bg-success">Invitație Proiect</span>
+                            <span class="badge bg-success">Project Invitation</span>
                         }
                         else
                         {
 
-                            <span class="badge bg-info">Comentariu</span>
+                            <span class="badge bg-info">Comment</span>
                         }
                     </h5>
                     <small>@notif.CreatedDate.ToString("g")</small>
@@ -33,15 +33,15 @@
                         <form asp-action="AcceptInvite" method="post">
                             <input type="hidden" name="notificationId" value="@notif.Id" />
                             <input type="hidden" name="projectId" value="@notif.RelatedEntityId" />
-                            <button type="submit" class="btn btn-sm btn-success">✅ Acceptă și intră în proiect</button>
+                            <button type="submit" class="btn btn-sm btn-success">✅ Accept and join the project</button>
                         </form>
                     }
                     else if (notif.Type == "Comment")
                     {
                         <form asp-action="MarkRead" class="d-inline" method="post">
                             <input type="hidden" name="id" value="@notif.Id" />
-                            <a href="@notif.Link" class="btn btn-sm btn-primary">Vezi Task</a>
-                            <button type="submit" class="btn btn-sm btn-outline-secondary">Marchează citit</button>
+                            <a href="@notif.Link" class="btn btn-sm btn-primary">View Task</a>
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Mark as read</button>
                         </form>
                     }
                 </div>
@@ -50,7 +50,7 @@
 
         @if (!Model.Any())
         {
-            <div class="alert alert-secondary text-center">Nu ai notificări noi.</div>
+            <div class="alert alert-secondary text-center">Best news are no news!</div>
         }
     </div>
 </div>

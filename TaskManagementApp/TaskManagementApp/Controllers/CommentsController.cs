@@ -54,7 +54,7 @@ namespace TaskManagementApp.Controllers
 
             {
 
-                TempData["message"] = "Task-ul nu a fost găsit!";
+                TempData["message"] = "Task not found!";
 
                 TempData["messageType"] = "alert-danger";
 
@@ -68,7 +68,7 @@ namespace TaskManagementApp.Controllers
 
             {
 
-                TempData["message"] = "Nu aveți acces la acest task!";
+                TempData["message"] = "You don't have access to this task!";
 
                 TempData["messageType"] = "alert-danger";
 
@@ -338,7 +338,7 @@ namespace TaskManagementApp.Controllers
 
             {
 
-                TempData["message"] = "Comentariul nu există!";
+                TempData["message"] = "Comment doesn't exist!";
 
                 TempData["messageType"] = "alert-danger";
 
@@ -352,7 +352,7 @@ namespace TaskManagementApp.Controllers
 
             {
 
-                TempData["message"] = "Nu aveți dreptul să editați acest comentariu!";
+                TempData["message"] = "You don't have access to edit the comment!";
 
                 TempData["messageType"] = "alert-danger";
 
@@ -398,7 +398,7 @@ namespace TaskManagementApp.Controllers
 
             {
 
-                TempData["message"] = "Comentariul nu există!";
+                TempData["message"] = "Comment doesn't exist!";
 
                 TempData["messageType"] = "alert-danger";
 
@@ -412,7 +412,7 @@ namespace TaskManagementApp.Controllers
 
             {
 
-                TempData["message"] = "Nu aveți dreptul să editați acest comentariu!";
+                TempData["message"] = "You don't have access to edit the comment!";
 
                 TempData["messageType"] = "alert-danger";
 
@@ -444,7 +444,7 @@ namespace TaskManagementApp.Controllers
 
 
 
-            TempData["message"] = "Comentariul a fost actualizat!";
+            TempData["message"] = "Comment has been updated!";
 
             TempData["messageType"] = "alert-success";
 
@@ -482,7 +482,7 @@ namespace TaskManagementApp.Controllers
 
             {
 
-                TempData["message"] = "Comentariul nu există!";
+                TempData["message"] = "Comment doesn't exist!";
 
                 TempData["messageType"] = "alert-danger";
 
@@ -498,7 +498,7 @@ namespace TaskManagementApp.Controllers
 
             {
 
-                TempData["message"] = "Nu aveți dreptul să ștergeți acest comentariu!";
+                TempData["message"] = "You don't have access to delete this comment!";
 
                 TempData["messageType"] = "alert-danger";
 
@@ -518,7 +518,7 @@ namespace TaskManagementApp.Controllers
 
 
 
-            TempData["message"] = "Comentariul a fost șters!";
+            TempData["message"] = "Comment deleted!";
 
             TempData["messageType"] = "alert-success";
 
@@ -554,7 +554,7 @@ namespace TaskManagementApp.Controllers
 
             {
 
-                TempData["message"] = "Comentariul nu există!";
+                TempData["message"] = "Comment doesn't exist!";
 
                 TempData["messageType"] = "alert-danger";
 
@@ -568,7 +568,7 @@ namespace TaskManagementApp.Controllers
 
             {
 
-                TempData["message"] = "Nu aveți acces la acest comentariu!";
+                TempData["message"] = "You don't have access to this comment!";
 
                 TempData["messageType"] = "alert-danger";
 
