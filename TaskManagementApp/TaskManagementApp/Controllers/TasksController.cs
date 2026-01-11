@@ -75,7 +75,7 @@ namespace TaskManagementApp.Controllers
             bool esteMembru = project.ProjectMembers
                                 .Any(pm => pm.UserId == userId);
 
-            if(!esteMembru && project.OrganizerId != userId)
+            if(project.OrganizerId != userId && !User.IsInRole("Administrator"))
             {
                 TempData["ErrorMessage"] = "You don't have permission to add tasks to this project.";
                 TempData["messageType"] = "alert-danger";
@@ -108,6 +108,11 @@ namespace TaskManagementApp.Controllers
             task.ProjectId = project.Id;
 
             task.Comments = new List<Comment>();
+
+            if (task.StartDate.Date < DateTime.Now.Date)
+            {
+                ModelState.AddModelError("StartDate", "Start date can't be in the past.");
+            }
 
             if (task.StartDate > task.EndDate)
             {
@@ -186,9 +191,14 @@ namespace TaskManagementApp.Controllers
             if (!esteAdmin && !esteOrganizator && !esteAsignat)
                 return Forbid();
 
+            if (task.StartDate.Date < DateTime.Now.Date)
+            {
+                ModelState.AddModelError("StartDate", "Start date can't be in the past.");
+            }
+
             if (requestTask.StartDate > requestTask.EndDate)
             {
-                ModelState.AddModelError("StartDate", "Start date can't be the same as End date.");
+                ModelState.AddModelError("StartDate", "End date has to be after the Start Date.");
             }
 
             if (!ModelState.IsValid)

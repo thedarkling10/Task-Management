@@ -60,7 +60,7 @@ namespace TaskManagementApp.Controllers
                 .OrderBy(t => t.EndDate)
                 .ToList();
 
-            // Pas?m datele prin ViewBag (F?r? model nou)
+            // Pasam datele prin ViewBag
             ViewBag.Projects = userProjects;
             ViewBag.Upcoming = upcoming;
             ViewBag.SelectedFilter = statusFilter;

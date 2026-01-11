@@ -8,20 +8,21 @@ namespace TaskManagementApp.Models
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Titlul task-ului este obligatoriu.")]
+        [Required(ErrorMessage = "Title is required.")]
         public string Title { get; set; }
 
-        [Required(ErrorMessage = "Descrierea task-ului este obligatorie.")]
+        [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; }
 
         //data de start si de end nu stiu daca trebuie sa fie obligatorii
-        [Required(ErrorMessage = "Data de început este obligatorie.")]
+        [Required(ErrorMessage = "Start date is required.")]
         public DateTime StartDate { get; set; }
-        [Required(ErrorMessage = "Data de finalizare este obligatorie.")]
+        [Required(ErrorMessage = "End date is required.")]
         public DateTime EndDate { get; set; }
-
+        [Required(ErrorMessage = "Content is required.")]
         //continutul este optional
         public string? Content { get; set; }
+        [Required(ErrorMessage = "Status is required.")]
         public string Status { get; set; }
       
         //cheie straina catre userul aignat

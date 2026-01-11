@@ -62,6 +62,7 @@
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-0"><i class="bi bi-link-45deg"></i></span>
                                 <input asp-for="Content" class="form-control bg-light border-0" placeholder="https://youtube.com/... or image URL" />
+                                <span asp-validation-for="Content" class="text-danger small"></span>
                             </div>
                             <div class="form-text small text-muted">Optional: Add a link to a video, image, or external resource.</div>
                         </div>
@@ -81,10 +82,12 @@
                             <div class="col-6">
                                 <label asp-for="StartDate" class="form-label fw-bold text-muted small text-uppercase">Start Date</label>
                                 <input asp-for="StartDate" class="form-control bg-light border-0" type="date" />
+                                <span asp-validation-for="StartDate" class="text-danger small"></span>
                             </div>
                             <div class="col-6">
                                 <label asp-for="EndDate" class="form-label fw-bold text-muted small text-uppercase">Due Date</label>
                                 <input asp-for="EndDate" class="form-control bg-light border-0" type="date" />
+                                <span asp-validation-for="EndDate" class="text-danger small"></span>
                             </div>
                         </div>
 
@@ -111,3 +114,8 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq; // Adăugat pentru .Any()
-using System; // Adăugat pentru DateTime
+using System.Linq;
+using System;
 
 namespace TaskManagementApp.Models
 {
-    //PASUL 4 : useri si roluri 
-    public class SeedData
+    public class SeedData
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
@@ -106,50 +105,69 @@ namespace TaskManagementApp.Models
                 // 4. PROIECTE
                 // ----------------------------------------------------
 
+                // Le definim variabilele in afara if-ului ca sa le folosim mai jos
+                var p1 = new Project
+                {
+                    Title = "Dezvoltare Aplicatie Task",
+                    Description = "Proiectul de laborator pentru cursul de .NET Core MVC.",
+                    OrganizerId = organizerId,
+                    Date = DateTime.Now.AddDays(-10)
+                };
+
+                var p2 = new Project
+                {
+                    Title = "Planificare Saptamana Viitoare",
+                    Description = "Organizarea sarcinilor pentru echipa de marketing.",
+                    OrganizerId = organizerId,
+                    Date = DateTime.Now.AddDays(-5)
+                };
+
+                var p3 = new Project
+                {
+                    Title = "Documentatie Interna",
+                    Description = "Crearea și actualizarea manualelor de utilizare.",
+                    OrganizerId = memberId, // George este organizator aici
+                    Date = DateTime.Now.AddDays(-2)
+                };
+
                 if (!context.Projects.Any())
                 {
-                    var p1 = new Project
-                    {
-                        Title = "Dezvoltare Aplicatie Task",
-                        Description = "Proiectul de laborator pentru cursul de .NET Core MVC.",
-                        OrganizerId = organizerId,
-                        Date = DateTime.Now.AddDays(-10)
-                    };
-
-                    var p2 = new Project
-                    {
-                        Title = "Planificare Saptamana Viitoare",
-                        Description = "Organizarea sarcinilor pentru echipa de marketing.",
-                        OrganizerId = organizerId,
-                        Date = DateTime.Now.AddDays(-5)
-                    };
-
-                    var p3 = new Project
-                    {
-                        Title = "Documentatie Interna",
-                        Description = "Crearea și actualizarea manualelor de utilizare.",
-                        OrganizerId = memberId,
-                        Date = DateTime.Now.AddDays(-2)
-                    };
-
                     context.Projects.AddRange(p1, p2, p3);
-                    context.SaveChanges();
+                    context.SaveChanges(); // Salvam ca sa se genereze ID-urile reale (daca e identity column)
+                }
+                else
+                {
+                    // Daca exista deja proiecte, le cautam ca sa avem ID-urile pentru Members si Tasks
+                    p1 = context.Projects.First(p => p.Title == "Dezvoltare Aplicatie Task");
+                    p3 = context.Projects.First(p => p.Title == "Documentatie Interna");
+                }
 
-                    // ----------------------------------------------------
-                    // 5. PROJECT MEMBERS
-                    // ----------------------------------------------------
+                // ----------------------------------------------------
+                // 5. PROJECT MEMBERS
+                // ----------------------------------------------------
 
+                if (!context.ProjectMembers.Any())
+                {
                     context.ProjectMembers.AddRange(
+                        // P1: Ana e Organizator (Accepted), George e invitat (Pending)
                         new ProjectMember { ProjectId = p1.Id, UserId = organizerId, IsAccepted = true },
-                        new ProjectMember { ProjectId = p1.Id, UserId = memberId, IsAccepted = false},
+                        new ProjectMember { ProjectId = p1.Id, UserId = memberId, IsAccepted = false },
+
+                        // P2: Ana e Organizator
                         new ProjectMember { ProjectId = p2.Id, UserId = organizerId, IsAccepted = true },
-                        new ProjectMember { ProjectId = p3.Id, UserId = memberId, IsAccepted = false }
+
+                        // P3: George e Organizator - TREBUIE SA FIE TRUE [FIX]
+                        new ProjectMember { ProjectId = p3.Id, UserId = memberId, IsAccepted = true }
                     );
+                    context.SaveChanges();
+                }
 
-                    // ----------------------------------------------------
-                    // 6. TASKS
-                    // ----------------------------------------------------
+                // ----------------------------------------------------
+                // 6. TASKS
+                // ----------------------------------------------------
 
+                if (!context.Tasks.Any())
+                {
                     context.Tasks.AddRange(
                         new Models.Task
                         {
@@ -166,17 +184,36 @@ namespace TaskManagementApp.Models
                             Title = "Implementare CRUD Proiecte",
                             Description = "Functionalitate CRUD.",
                             ProjectId = p1.Id,
-                            UserId = memberId,
+                            UserId = memberId, // George are task, desi e pending (se poate, dar nu vede pana nu accepta)
                             Status = "In Progress",
                             StartDate = DateTime.Now.AddDays(-7),
                             EndDate = DateTime.Now.AddDays(1)
                         }
                     );
+                    context.SaveChanges();
+                }
+
+                // ----------------------------------------------------
+                // 7. NOTIFICATIONS (NOU - Pentru Pending Invites)
+                // ----------------------------------------------------
+                // George (memberId) este Pending in P1, deci trebuie sa aiba notificare
+
+                if (!context.Notifications.Any())
+                {
+                    context.Notifications.Add(new Notification
+                    {
+                        UserId = memberId,          // Destinatar: George
+                        SenderId = organizerId,     // Expeditor: Ana
+                        Text = $"Te-a invitat să te alături proiectului '{p1.Title}'.",
+                        Type = "Invite",
+                        RelatedEntityId = p1.Id,    // ID-ul proiectului pentru butonul Accept
+                        CreatedDate = DateTime.Now,
+                        IsRead = false
+                    });
 
                     context.SaveChanges();
                 }
             }
         }
-
     }
 }

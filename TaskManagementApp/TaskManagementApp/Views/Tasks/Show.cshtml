@@ -57,26 +57,55 @@
 
                     @if (!string.IsNullOrEmpty(Model.Content))
                     {
+                        // 1. Curățăm link-ul de spații goale care pot strica afișarea
+                        var rawUrl = Model.Content.Trim();
+
                         <div class="mb-4">
                             <h6 class="text-uppercase text-muted fw-bold small mb-2">Attached Media</h6>
                             <div class="card bg-light border-0 rounded-3 overflow-hidden">
                                 <div class="card-body p-2">
-                                    @if (Model.Content.Contains("youtube") || Model.Content.Contains("youtu.be"))
+
+                                    @* --- LOGICA YOUTUBE --- *@
+                                    @if (rawUrl.Contains("youtube.com") || rawUrl.Contains("youtu.be"))
                                     {
+                                        // Extragem ID-ul video-ului pentru a crea link-ul de embed corect
+                                        string embedUrl = rawUrl;
+                                        if (rawUrl.Contains("v="))
+                                        {
+                                            // Format lung: youtube.com/watch?v=IDulVideo&altceva...
+                                            var videoId = rawUrl.Split("v=")[1].Split("&")[0];
+                                            embedUrl = $"https://www.youtube.com/embed/{videoId}";
+                                        }
+                                        else if (rawUrl.Contains("youtu.be/"))
+                                        {
+                                            // Format scurt: youtu.be/IDulVideo
+                                            var videoId = rawUrl.Split("youtu.be/")[1].Split("?")[0];
+                                            embedUrl = $"https://www.youtube.com/embed/{videoId}";
+                                        }
+
                                         <div class="ratio ratio-16x9 rounded overflow-hidden">
-                                            <iframe src="@Model.Content.Replace("watch?v=", "embed/")" allowfullscreen></iframe>
+                                            <iframe src="@embedUrl" allowfullscreen></iframe>
                                         </div>
                                     }
-                                    else if (Model.Content.EndsWith(".jpg") || Model.Content.EndsWith(".png") || Model.Content.EndsWith(".jpeg"))
+                                    @* --- LOGICA IMAGINI (Case Insensitive) --- *@
+                                    else if (new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" }.Any(ext => rawUrl.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
                                     {
-                                        <img src="@Model.Content" class="img-fluid rounded w-100" alt="Task Attachment" style="max-height: 500px; object-fit: contain;" />
+                                        <img src="@rawUrl" class="img-fluid rounded w-100" alt="Task Attachment" style="max-height: 500px; object-fit: contain;" />
                                     }
+                                    @* --- LOGICA DEFAULT (Link) --- *@
                                     else
                                     {
                                         <div class="d-flex align-items-center p-2">
                                             <i class="bi bi-link-45deg fs-3 me-2 text-primary"></i>
-                                            <a href="@Model.Content" target="_blank" class="text-break text-decoration-none fw-medium">
-                                                External Link: @Model.Content
+                                            <a href="@rawUrl" target="_blank" class="text-break text-decoration-none fw-medium">
+                                                @if (rawUrl.Length > 50)
+                                                {
+                                                    @(rawUrl.Substring(0, 47) + "...")
+                                                }
+                                                else
+                                                {
+                                                    @rawUrl
+                                                }
                                             </a>
                                         </div>
                                     }

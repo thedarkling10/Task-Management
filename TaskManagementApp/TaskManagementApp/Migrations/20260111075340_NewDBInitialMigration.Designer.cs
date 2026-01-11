@@ -12,8 +12,8 @@ using TaskManagementApp.Models;
 namespace TaskManagementApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260104134527_FixNotificationContext")]
-    partial class FixNotificationContext
+    [Migration("20260111075340_NewDBInitialMigration")]
+    partial class NewDBInitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -352,6 +352,9 @@ namespace TaskManagementApp.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("bit");
+
                     b.HasKey("ProjectId", "UserId");
 
                     b.HasIndex("UserId");
@@ -371,7 +374,7 @@ namespace TaskManagementApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("GeneratedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("ProjectId")
