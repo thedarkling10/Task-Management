@@ -1,5 +1,117 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model TaskManagementApp.Models.Task
+
 @{
+    ViewData["Title"] = "Edit Task";
 }
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-warning bg-gradient text-dark p-4 border-0">
+                    <h3 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Edit Task</h3>
+                </div>
+
+                <div class="card-body p-5">
+                    <input type="hidden" asp-for="Id" />
+
+                    @if ((ViewBag.EsteAdmin ?? true) || (ViewBag.EsteOrganizator ?? true))
+                    {
+                        <form asp-action="Edit" method="post">
+
+                            <div class="mb-4">
+                                <label asp-for="Title" class="form-label fw-bold text-muted small text-uppercase">Task Title</label>
+                                <input asp-for="Title" class="form-control bg-light border-0" />
+                                <span asp-validation-for="Title" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="Description" class="form-label fw-bold text-muted small text-uppercase">Description</label>
+                                <textarea asp-for="Description" class="form-control bg-light border-0" rows="4"></textarea>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="Content" class="form-label fw-bold text-muted small text-uppercase">Media Content</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i class="bi bi-link-45deg"></i></span>
+                                    <input asp-for="Content" class="form-control bg-light border-0" placeholder="https://youtube.com/... or image URL" />
+                                </div>
+                                <div class="form-text small">Paste a YouTube link, an image URL, or any website link.</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="UserId" class="form-label fw-bold text-muted small text-uppercase">Assign To</label>
+                                <select asp-for="UserId" class="form-select bg-light border-0">
+                                    <option value="">-- Not assigned --</option>
+                                    @foreach (var user in ViewBag.Users)
+                                    {
+                                        <option value="@user.Id">@user.UserName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-6">
+                                    <label asp-for="StartDate" class="form-label fw-bold text-muted small text-uppercase">Start Date</label>
+                                    <input asp-for="StartDate" class="form-control bg-light border-0" type="date" />
+                                </div>
+                                <div class="col-6">
+                                    <label asp-for="EndDate" class="form-label fw-bold text-muted small text-uppercase">Due Date</label>
+                                    <input asp-for="EndDate" class="form-control bg-light border-0" type="date" />
+                                </div>
+                            </div>
+
+                            <div class="mb-5">
+                                <label asp-for="Status" class="form-label fw-bold text-muted small text-uppercase">Status</label>
+                                <select asp-for="Status" class="form-select bg-light border-0">
+                                    <option value="Not Started">Not Started</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a asp-action="Show" asp-route-id="@Model.Id" class="btn btn-light btn-lg px-4 text-muted">Cancel</a>
+                                <button type="submit" class="btn btn-warning btn-lg px-5 rounded-pill shadow-sm fw-bold">Save Changes</button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info border-0 rounded-3 mb-4">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            As a member, you can only update the status of this task.
+                        </div>
+
+                        <form asp-action="Edit" method="post">
+                            <input type="hidden" asp-for="Title" />
+                            <input type="hidden" asp-for="Description" />
+                            <input type="hidden" asp-for="Content" />
+                            <input type="hidden" asp-for="UserId" />
+                            <input type="hidden" asp-for="StartDate" />
+                            <input type="hidden" asp-for="EndDate" />
+
+                            <div class="mb-5">
+                                <label asp-for="Status" class="form-label fw-bold text-muted small text-uppercase">Update Status</label>
+                                <select asp-for="Status" class="form-select form-select-lg bg-light border-0">
+                                    <option value="Not Started">Not Started</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a asp-action="Show" asp-route-id="@Model.Id" class="btn btn-light btn-lg px-4 text-muted">Cancel</a>
+                                <button type="submit" class="btn btn-warning btn-lg px-5 rounded-pill shadow-sm fw-bold">Update Status</button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

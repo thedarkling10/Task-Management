@@ -1,0 +1,234 @@
+﻿@model IEnumerable<TaskManagementApp.Models.Task>
+
+@{
+    ViewBag.Title = "Personal Dashboard";
+    var projects = ViewBag.Projects as List<TaskManagementApp.Models.Project>;
+    var upcoming = ViewBag.Upcoming as List<TaskManagementApp.Models.Task>;
+
+    var currentFilter = ViewBag.SelectedFilter as string;
+}
+
+<style>
+        .task-card {
+            transition: all 0.2s ease-in-out;
+            border-left: 4px solid transparent;
+        }
+
+            .task-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+            }
+        /* Status Colors */
+        .border-left-todo {
+            border-left-color: #6c757d !important;
+        }
+        /* Gray for Not Started */
+        .border-left-progress {
+            border-left-color: #ffc107 !important;
+        }
+        /* Yellow for In Progress */
+        .border-left-done {
+            border-left-color: #198754 !important;
+        }
+        /* Green for Completed */
+
+        .dashboard-icon-bg {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+    </style>
+
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="fw-bold text-dark mb-1"><i class="bi bi-grid-1x2-fill text-primary me-2"></i>Dashboard</h2>
+                <p class="text-muted mb-0">Overview of your activity and pending tasks.</p>
+            </div>
+            <div class="d-none d-md-block">
+                <span class="text-muted small">Today: @DateTime.Now.ToString("dd MMM yyyy")</span>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4">
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h5 class="fw-bold d-flex align-items-center">
+                            <span class="dashboard-icon-bg bg-danger bg-opacity-10 text-danger me-2">
+                                <i class="bi bi-alarm"></i>
+                            </span>
+                            Urgent Deadlines
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @if (upcoming != null && upcoming.Any())
+                        {
+                            <div class="vstack gap-3">
+                                @foreach (var t in upcoming)
+                                {
+                                    <a href="/Tasks/Show/@t.Id" class="text-decoration-none text-dark">
+                                        <div class="p-3 rounded-3 bg-light border d-flex justify-content-between align-items-center">
+                                            <div style="overflow: hidden;">
+                                                <h6 class="mb-1 text-truncate">@t.Title</h6>
+                                                <small class="text-muted"><i class="bi bi-folder2"></i> @t.Project?.Title</small>
+                                            </div>
+                                            <div class="text-end ms-2">
+                                                <span class="badge bg-danger rounded-pill">@t.EndDate.ToString("dd MMM")</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-4">
+                                <i class="bi bi-cup-hot text-muted fs-1 opacity-50"></i>
+                                <p class="text-muted small mt-2">No urgent tasks. Relax!</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h5 class="fw-bold d-flex align-items-center">
+                            <span class="dashboard-icon-bg bg-primary bg-opacity-10 text-primary me-2">
+                                <i class="bi bi-briefcase"></i>
+                            </span>
+                            Active Projects
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @if (projects != null && projects.Any())
+                        {
+                            <div class="list-group list-group-flush">
+                                @foreach (var p in projects)
+                                {
+                                    <a href="/Projects/Show/@p.Id" class="list-group-item list-group-item-action border-0 px-0 d-flex justify-content-between align-items-center">
+                                        <span class="fw-medium">@p.Title</span>
+                                        <i class="bi bi-chevron-right text-muted small"></i>
+                                    </a>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center py-3">No active projects.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm" style="min-height: 500px;">
+                    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <h5 class="fw-bold mb-0">My Tasks</h5>
+
+                        <form method="get" asp-action="Dashboard" class="d-flex align-items-center">
+                            <label class="small text-muted me-2">Filter by:</label>
+                            <select name="statusFilter" class="form-select form-select-sm border-light bg-light shadow-none" style="width: 150px;" onchange="this.form.submit()">
+                                <option value="">All Tasks</option>
+                                <option value="Not Started" selected="@(ViewBag.SelectedFilter == "Not Started")">Not Started</option>
+                                <option value="In Progress" selected="@(ViewBag.SelectedFilter == "In Progress")">In Progress</option>
+                                <option value="Completed" selected="@(ViewBag.SelectedFilter == "Completed")">Completed</option>
+                            </select>
+                        </form>
+                    </div>
+
+                    <div class="card-body bg-light bg-opacity-10">
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var group in Model.GroupBy(t => t.Status))
+                            {
+                                <div class="mb-4">
+                                    <h6 class="text-uppercase text-muted fw-bold small mb-3 ps-1">
+                                        @if (group.Key == "Not Started")
+                                        {
+                                            <i class="bi bi-circle text-secondary me-1"></i>
+                                        }
+                                        else if (group.Key == "In Progress")
+                                        {
+
+                                            <i class="bi bi-arrow-repeat text-warning me-1"></i>
+                                        }
+                                        else if (group.Key == "Completed")
+                                        {
+
+                                            <i class="bi bi-check-circle text-success me-1"></i>
+                                        }
+                                        @(group.Key ?? "Unspecified")
+                                    </h6>
+
+                                    <div class="vstack gap-2">
+                                        @foreach (var task in group)
+                                        {
+                                            // Logic for border colors
+                                            string statusClass = task.Status == "Completed" ? "border-left-done" :
+                                            (task.Status == "In Progress" ? "border-left-progress" : "border-left-todo");
+
+                                            // Logic for badge colors
+                                            string badgeClass = task.Status == "Completed" ? "bg-success" :
+                                            (task.Status == "In Progress" ? "bg-warning text-dark" : "bg-secondary");
+
+                                            <div class="card task-card border-0 shadow-sm @statusClass">
+                                                <div class="card-body py-3">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-7 mb-2 mb-md-0">
+                                                            <h6 class="fw-bold mb-1">
+                                                                <a href="/Tasks/Show/@task.Id" class="text-decoration-none text-dark stretched-link">
+                                                                    @task.Title
+                                                                </a>
+                                                            </h6>
+                                                            <span class="badge bg-light text-secondary border fw-normal">
+                                                                <i class="bi bi-folder2 me-1"></i> @task.Project?.Title
+                                                            </span>
+                                                            <span class="text-muted small ms-2">
+                                                                <i class="bi bi-calendar-event me-1"></i>Due: @task.EndDate.ToString("dd MMM")
+                                                            </span>
+                                                        </div>
+
+                                                        <div class="col-md-5 text-md-end">
+                                                            <span class="badge @badgeClass rounded-pill px-3 py-2">@task.Status</span>
+
+                                                            @if (task.Status != "Completed")
+                                                            {
+                                                                <a href="/Tasks/Edit/@task.Id" class="btn btn-sm btn-light ms-2" style="position: relative; z-index: 2;" title="Edit">
+                                                                    <i class="bi bi-pencil"></i>
+                                                                </a>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center py-5 mt-5">
+                                <div class="mb-3">
+                                    <span class="bg-light p-4 rounded-circle">
+                                        <i class="bi bi-check2-all fs-1 text-muted"></i>
+                                    </span>
+                                </div>
+                                <h5 class="text-muted">No tasks found</h5>
+                                <p class="text-muted small">No tasks found matching your criteria.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section Scripts {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+}

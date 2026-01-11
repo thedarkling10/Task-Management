@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskManagementApp.Models;
+using TaskManagementApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 
 
 builder.Services.AddControllersWithViews();
+//builder.Services.AddScoped<IProjectSummaryService, ProjectSummaryService>();
+builder.Services.AddScoped<IProjectSummaryService, GoogleProjectSummaryService>();
+
 
 var app = builder.Build();
 

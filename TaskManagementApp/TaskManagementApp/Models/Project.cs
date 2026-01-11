@@ -16,17 +16,17 @@ namespace TaskManagementApp.Models
 
         public DateTime Date { get; set; }
 
-        [Required]
+    
         //cheie straina catre organizatorul proiectului
-        public string OrganizerId { get; set; }
+        public string? OrganizerId { get; set; }
 
-        public virtual ApplicationUser Organizer { get; set; }
+        public virtual ApplicationUser? Organizer { get; set; }
 
-        public virtual ICollection<Task> Tasks { get; set; }
+        public virtual ICollection<Task>? Tasks { get; set; }
 
-        public ICollection<ProjectMember> ProjectMembers { get; set; }
-        public ICollection<Summary> ProjectSummaries { get; set; } // Pentru AI Summary
-        public ICollection<ProjectInvitation> Invitations { get; set; } // Invitațiile trimise din acest proiect
+        public ICollection<ProjectMember>? ProjectMembers { get; set; }
+        public ICollection<Summary>? ProjectSummaries { get; set; } // Pentru AI Summary
+        public ICollection<Notification>? Invitations { get; set; } // Invitațiile trimise din acest proiect
 
     }
 }

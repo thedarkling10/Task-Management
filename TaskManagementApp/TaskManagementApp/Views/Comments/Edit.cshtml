@@ -1,5 +1,31 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model TaskManagementApp.Models.Comment
 @{
+    ViewBag.Title = "Edit Comment";
+    var task = ViewBag.Task;
 }
+
+<div class="card shadow-lg p-4">
+    <h2 class="card-title">Edit Comment</h2>
+    <p class="card-subtitle mb-4 text-muted">Task: <strong>@task.Title</strong></p>
+
+    <form asp-action="Edit" method="post">
+
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="TaskId" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group mb-4">
+            <label asp-for="Content" class="form-label">Comment Content</label>
+            <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-warning">💾 Save Changes</button>
+            <a class="btn btn-secondary" href="/Tasks/Show/@Model.TaskId">Cancel and go to task</a>
+        </div>
+    </form>
+</div>

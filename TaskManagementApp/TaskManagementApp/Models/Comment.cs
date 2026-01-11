@@ -9,17 +9,17 @@ namespace TaskManagementApp.Models
         [Key]
         public int Id { get; set; }
 
-        public int TaskId { get; set; }
-        public virtual Task Task { get; set; }
+        public int? TaskId { get; set; }
+        public virtual Task? Task { get; set; }
 
         //cheie straina catre userul care a postat comentariul
-        public string UserId { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        public string? UserId { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
         [Required(ErrorMessage = "Conținutul comentariului este obligatoriu.")]
         public string Content { get; set; }
 
         public DateTime Date { get; set; }
-        
+
     }
 }

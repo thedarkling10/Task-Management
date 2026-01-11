@@ -1,131 +1,243 @@
 ﻿@{
-    ViewData["Title"] = "TaskFlow - Gestionează proiectele inteligent";
+    ViewData["Title"] = "TaskFlow - Elevate your project management";
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
 <style>
-    .hero {
-        background: linear-gradient(135deg, #0d6efd, #6610f2);
-        color: white;
-        padding: 100px 0;
-        text-align: center;
+    body {
+        font-family: 'Inter', sans-serif;
     }
 
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: bold;
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        padding: 80px 0;
+        border-radius: 0 0 50px 50px; /* Modern curve at the bottom */
+        margin-bottom: 60px;
+    }
+
+    .hero-btn {
+        padding: 12px 30px;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: transform 0.2s;
+    }
+
+        .hero-btn:hover {
+            transform: translateY(-3px);
         }
 
-        .hero p {
-            font-size: 1.25rem;
-            opacity: 0.9;
-        }
-
+    /* Features */
     .section-title {
-        font-weight: bold;
-        margin-top: 50px;
-        margin-bottom: 30px;
-        text-align: center;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
+
+    .section-subtitle {
+        color: #6c757d;
+        font-weight: 300;
+        font-size: 1.1rem;
+        margin-bottom: 3rem;
     }
 
     .feature-card {
         border: none;
-        transition: 0.3s;
+        border-radius: 20px;
+        background: #fff;
+        transition: all 0.3s ease;
+        height: 100%;
+        padding: 2rem;
     }
 
         .feature-card:hover {
-            transform: translateY(-7px);
-            box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(13, 110, 253, 0.15);
         }
 
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        background: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Testimonials */
+    .testimonial-card {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 15px;
+        padding: 2rem;
+        height: 100%;
+    }
+
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        background-color: #dee2e6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #6c757d;
+        margin-right: 15px;
+    }
 </style>
 
-<div class="hero">
-    <h1>Organizează-ți proiectele într-un mod inteligent</h1>
-    <p>Platformă modernă de Task Management pentru echipe și proiecte colaborative.</p>
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="display-4 fw-bolder mb-3">Organize projects <br /> the smart way.</h1>
+                <p class="lead mb-4 opacity-75">The modern task management platform for high-performing teams. Collaborate, track, and succeed together.</p>
 
-    @if (!User.Identity.IsAuthenticated)
-    {
-        <a href="/Identity/Account/Login" class="btn btn-light btn-lg mt-3 me-2">Autentificare</a>
-        <a href="/Identity/Account/Register" class="btn btn-outline-light btn-lg mt-3">Înregistrare</a>
-    }
-    else
-    {
-        <a href="/Dashboard" class="btn btn-light btn-lg mt-3 me-2">Dashboard</a>
-        <a href="/Projects" class="btn btn-outline-light btn-lg mt-3">Proiectele mele</a>
+                <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <a href="/Identity/Account/Login" class="btn btn-light hero-btn text-primary">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                        </a>
+                        <a href="/Identity/Account/Register" class="btn btn-outline-light hero-btn">
+                            Get Started
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Home/Dashboard" class="btn btn-light hero-btn text-primary">
+                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                        </a>
+                        <a href="/Projects" class="btn btn-outline-light hero-btn">
+                            My Projects
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center">
+                <i class="bi bi-kanban" style="font-size: 180px; color: rgba(255,255,255,0.2);"></i>
+            </div>
+        </div>
+    </div>
+</div>
 
-        @if (User.IsInRole("Admin"))
+<div class="container py-5">
+    <div class="text-center">
+        <h2 class="section-title">Why choose TaskFlow?</h2>
+        <p class="section-subtitle">Everything you need to manage your workflow efficiently.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card feature-card shadow-sm">
+                <div class="icon-box">
+                    <i class="bi bi-briefcase"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Project Management</h4>
+                <p class="text-muted">Create unlimited projects, invite team members, and visualize progress with our intuitive tools.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card feature-card shadow-sm">
+                <div class="icon-box">
+                    <i class="bi bi-check2-square"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Smart Tasks</h4>
+                <p class="text-muted">Organize work with detailed tasks. Set deadlines, priorities, and statuses to keep everyone on track.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card feature-card shadow-sm">
+                <div class="icon-box">
+                    <i class="bi bi-chat-dots"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Real-time Collaboration</h4>
+                <p class="text-muted">Discuss details directly on tasks. Leave comments and mention colleagues to solve issues faster.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5 mb-5">
+    <div class="text-center mb-5">
+        <h2 class="section-title">Trusted by Teams</h2>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="testimonial-card">
+                <div class="text-warning mb-3">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                </div>
+                <p class="fst-italic text-muted mb-4">"An intuitive platform that helped me coordinate my team much more efficiently! Highly recommended."</p>
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar">A</div>
+                    <div>
+                        <h6 class="fw-bold mb-0">Andrew</h6>
+                        <small class="text-muted">Project Manager</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="testimonial-card">
+                <div class="text-warning mb-3">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                </div>
+                <p class="fst-italic text-muted mb-4">"I love the personalized dashboard. I can see my pending tasks clearly every morning."</p>
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar">J</div>
+                    <div>
+                        <h6 class="fw-bold mb-0">Joanna</h6>
+                        <small class="text-muted">Senior Developer</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="testimonial-card">
+                <div class="text-warning mb-3">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                </div>
+                <p class="fst-italic text-muted mb-4">"The collaboration features are brilliant. We stopped using email for internal project updates."</p>
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar">M</div>
+                    <div>
+                        <h6 class="fw-bold mb-0">Michael</h6>
+                        <small class="text-muted">Team Lead</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-3">Ready to boost your productivity?</h2>
+        <p class="lead text-muted mb-4">Join today and start managing your projects like a pro.</p>
+
+        @if (!User.Identity.IsAuthenticated)
         {
-            <a href="/Admin" class="btn btn-warning btn-lg mt-3 ms-2">Admin Panel</a>
+            <a href="/Identity/Account/Register" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">Create Free Account</a>
         }
-    }
-</div>
-
-<!-- FEATURES -->
-<div class="container">
-    <h2 class="section-title">Funcționalități principale</h2>
-
-    <div class="row g-4">
-        <div class="col-lg-4">
-            <div class="card feature-card p-4">
-                <h4>✔ Gestionarea proiectelor</h4>
-                <p>Creezi proiecte, inviți membri și urmărești progresul fiecărei echipe.</p>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card feature-card p-4">
-                <h4>📌 Task-uri inteligente</h4>
-                <p>Adaugă task-uri, asignază membri și setează statusuri pentru progres.</p>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card feature-card p-4">
-                <h4>💬 Sistem de comentarii</h4>
-                <p>Colaborează direct în task-uri prin comentarii actualizate în timp real.</p>
-            </div>
-        </div>
+        else
+        {
+            <a href="/Home/Dashboard" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">Go to Dashboard</a>
+        }
     </div>
-</div>
-
-<!-- TESTIMONIALS -->
-<div class="container mt-5">
-    <h2 class="section-title">Ce spun utilizatorii</h2>
-
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card p-4">
-                <p>„O platformă intuitivă care m-a ajutat să-mi coordonez echipa mult mai eficient!”</p>
-                <strong>— Andrei, Project Manager</strong>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card p-4">
-                <p>„Îmi place dashboard-ul personalizat, văd totul foarte clar.”</p>
-                <strong>— Ioana, Developer</strong>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card p-4">
-                <p>„Feature-ul cu AI este genial! Rezumatele rapide mă ajută zilnic.”</p>
-                <strong>— Mihai, Team Lead</strong>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- CTA -->
-<div class="text-center my-5">
-    @if (!User.Identity.IsAuthenticated)
-    {
-        <a href="/Identity/Account/Register" class="btn btn-primary btn-lg px-5">Începe acum</a>
-    }
-    else
-    {
-        <a href="/Dashboard" class="btn btn-success btn-lg px-5">Mergi la Dashboard</a>
-    }
 </div>

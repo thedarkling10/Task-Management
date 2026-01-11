@@ -12,8 +12,8 @@ using TaskManagementApp.Models;
 namespace TaskManagementApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251207143916_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20260111082530_Required")]
+    partial class Required
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -250,11 +250,10 @@ namespace TaskManagementApp.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TaskId")
+                    b.Property<int?>("TaskId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -264,6 +263,55 @@ namespace TaskManagementApp.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("TaskManagementApp.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Link")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RelatedEntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("SenderId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("TaskManagementApp.Models.Project", b =>
@@ -282,7 +330,6 @@ namespace TaskManagementApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OrganizerId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
@@ -297,43 +344,6 @@ namespace TaskManagementApp.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("TaskManagementApp.Models.ProjectInvitation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateSent")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InvitedUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("OrganizerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InvitedUserId");
-
-                    b.HasIndex("OrganizerId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectInvitations");
-                });
-
             modelBuilder.Entity("TaskManagementApp.Models.ProjectMember", b =>
                 {
                     b.Property<int>("ProjectId")
@@ -341,6 +351,9 @@ namespace TaskManagementApp.Migrations
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("bit");
 
                     b.HasKey("ProjectId", "UserId");
 
@@ -361,7 +374,7 @@ namespace TaskManagementApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("GeneratedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("ProjectId")
@@ -383,6 +396,7 @@ namespace TaskManagementApp.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -392,7 +406,7 @@ namespace TaskManagementApp.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -407,7 +421,6 @@ namespace TaskManagementApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -474,17 +487,36 @@ namespace TaskManagementApp.Migrations
                 {
                     b.HasOne("TaskManagementApp.Models.Task", "Task")
                         .WithMany("Comments")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TaskId");
 
                     b.HasOne("TaskManagementApp.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Task");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TaskManagementApp.Models.Notification", b =>
+                {
+                    b.HasOne("TaskManagementApp.Models.Project", null)
+                        .WithMany("Invitations")
+                        .HasForeignKey("ProjectId");
+
+                    b.HasOne("TaskManagementApp.Models.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("TaskManagementApp.Models.ApplicationUser", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sender");
 
                     b.Navigation("User");
                 });
@@ -493,38 +525,9 @@ namespace TaskManagementApp.Migrations
                 {
                     b.HasOne("TaskManagementApp.Models.ApplicationUser", "Organizer")
                         .WithMany("OrganizedProjects")
-                        .HasForeignKey("OrganizerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OrganizerId");
 
                     b.Navigation("Organizer");
-                });
-
-            modelBuilder.Entity("TaskManagementApp.Models.ProjectInvitation", b =>
-                {
-                    b.HasOne("TaskManagementApp.Models.ApplicationUser", "InvitedUser")
-                        .WithMany("Invitations")
-                        .HasForeignKey("InvitedUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("TaskManagementApp.Models.ApplicationUser", "Organizer")
-                        .WithMany()
-                        .HasForeignKey("OrganizerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("TaskManagementApp.Models.Project", "Project")
-                        .WithMany("Invitations")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("InvitedUser");
-
-                    b.Navigation("Organizer");
-
-                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("TaskManagementApp.Models.ProjectMember", b =>
@@ -562,14 +565,11 @@ namespace TaskManagementApp.Migrations
                     b.HasOne("TaskManagementApp.Models.Project", "Project")
                         .WithMany("Tasks")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TaskManagementApp.Models.ApplicationUser", "User")
                         .WithMany("AssignedTasks")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Project");
 
@@ -580,7 +580,7 @@ namespace TaskManagementApp.Migrations
                 {
                     b.Navigation("AssignedTasks");
 
-                    b.Navigation("Invitations");
+                    b.Navigation("Notifications");
 
                     b.Navigation("OrganizedProjects");
 
